@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Pharmacare</string>
+    <string name="back">Back</string>
+    <string name="type_remark">Type Remark</string>
+    <string name="next">Next</string>
+    <string name="add_a_prescription">Add a Prescription</string>
 </resources>

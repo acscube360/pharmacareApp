@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".NewOrderActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include
+            android:id="@+id/tbar"
+            layout="@layout/top_tool_bar" />
+
+        <LinearLayout
+            android:id="@+id/ll_top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tbar"
+            android:layout_marginBottom="25dp"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/et_remark"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginLeft="25dp"
+                android:layout_marginTop="25dp"
+                android:layout_marginRight="25dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/tv_background"
+                android:hint="@string/type_remark"
+                android:inputType="text"
+                android:padding="10dp"
+                android:textColorHint="@color/et_hint"
+                android:textSize="13sp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="25dp"
+                android:background="@drawable/tv_background">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:text="@string/add_a_prescription"
+                    android:textColorHint="@color/et_hint"
+                    android:textSize="13sp" />
+
+                <ImageView
+                    android:id="@+id/iv_open_camera"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="50dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/camera" />
+
+                <ImageView
+
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    android:contentDescription="TODO"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/image" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/ll_top"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="25dp"
+            android:layout_marginRight="25dp"
+            android:layout_marginBottom="170dp">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recView_selected"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                />
+        </LinearLayout>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="25dp"
+            android:layout_marginRight="25dp"
+            android:layout_marginBottom="105dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_back"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.45"
+                android:background="@drawable/btn_back_background"
+                android:text="@string/back"
+                android:textAllCaps="false"
+                android:textSize="16sp" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.1" />
+
+            <Button
+                android:id="@+id/btn_next"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.45"
+                android:background="@drawable/btn_next_background"
+                android:text="@string/next"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <include layout="@layout/bottom_toolbar" />
+    </RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

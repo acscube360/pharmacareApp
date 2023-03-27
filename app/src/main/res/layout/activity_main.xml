@@ -5,11 +5,51 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
-<TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_centerVertical="true"
-    android:layout_centerHorizontal="true"
-    android:text="@string/app_name"/>
-   <include layout="@layout/bottom_toolbar"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="75dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
+        android:orientation="vertical">
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.05" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:background="@drawable/home_btn_bg"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.425"
+            android:text="Orders"
+            android:textSize="28sp"
+            android:textColor="@color/black"
+            android:textAllCaps="false" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.05" />
+        />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:background="@drawable/home_btn_bg"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.425"
+            android:textSize="28sp"
+            android:text="New Orders"
+            android:textColor="@color/black"
+            android:textAllCaps="false" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.05" />
+        />
+    </LinearLayout>
+
+    <include layout="@layout/bottom_toolbar" />
 </RelativeLayout>
