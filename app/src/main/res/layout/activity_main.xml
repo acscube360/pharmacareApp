@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:background="@color/white">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -19,6 +20,7 @@
             android:layout_weight="0.05" />
 
         <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_orders"
             android:background="@drawable/home_btn_bg"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -26,7 +28,8 @@
             android:text="Orders"
             android:textSize="28sp"
             android:textColor="@color/black"
-            android:textAllCaps="false" />
+            android:textAllCaps="false"
+            android:elevation="4dp"/>
 
         <View
             android:layout_width="match_parent"
@@ -35,6 +38,7 @@
         />
 
         <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_new_orders"
             android:background="@drawable/home_btn_bg"
             android:layout_width="match_parent"
             android:layout_height="0dp"
