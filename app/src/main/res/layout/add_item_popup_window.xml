@@ -2,41 +2,106 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:gravity="center"
+    android:animateLayoutChanges="true"
     android:paddingLeft="10dp"
-    android:paddingRight="10dp"
-    android:gravity="center">
+    android:paddingRight="10dp">
 
-<androidx.cardview.widget.CardView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    app:cardCornerRadius="5dp"
-    app:cardBackgroundColor="@color/white">
-
-    <LinearLayout
-        android:padding="10dp"
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="10dp"
+        app:strokeColor="@color/tv_stroke"
+        app:strokeWidth="1dp">
 
-        <TextView
-            android:id="@+id/titleText"
-            android:layout_gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Title"
-            android:textColor="@color/btn_back_bg"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:padding="10dp"/>
-
-
-        <Button
-            android:id="@+id/messageButton"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="button" />
+            android:layout_height="match_parent"
+            android:layout_margin="25dp"
+            android:orientation="vertical">
 
-    </LinearLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="25dp">
 
-</androidx.cardview.widget.CardView>
-    </LinearLayout>
+                <TextView
+                    android:id="@+id/titleText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="Paracetamol"
+                    android:textColor="@color/btn_back_bg"
+                    android:textSize="20sp" />
+
+                <ImageView
+                    android:id="@+id/iv_close"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:padding="8dp"
+                    android:src="@drawable/cross" />
+            </RelativeLayout>
+
+            <Spinner
+                android:id="@+id/batch_spinner"
+                android:layout_marginBottom="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/tv_background" />
+            <Spinner
+                android:id="@+id/sell_type_spinner"
+                android:layout_marginBottom="15dp"
+
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/tv_background" />
+            <NumberPicker
+                android:layout_marginBottom="45dp"
+
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/tv_background"/>
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="25dp"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_cancel"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.45"
+                    android:background="@drawable/btn_back_background"
+                    android:text="Cancel"
+                    android:textAllCaps="false"
+                    android:textColor="@color/btn_back_bg"
+                    android:textSize="16sp" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.1" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_next"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.45"
+                    android:background="@drawable/btn_next_background"
+                    android:text="Add"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+</LinearLayout>

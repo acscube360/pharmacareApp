@@ -72,10 +72,11 @@ public class AddNewOrderActivity extends AppCompatActivity implements View.OnCli
                 openGallery();
                 break;
             case R.id.btn_next:
-                Intent intent=new Intent(new Intent(v.getContext(),AddItemActivity.class));
-                intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                startActivity(intent);
 
+                Intent intent = new Intent(v.getContext(), AddItemActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                intent.putExtra("item_code", "");
+                startActivity(intent);
                 break;
 
             case R.id.btn_back:

@@ -1,20 +1,20 @@
 package com.example.pharmacare.ui;
 
+import android.content.Context;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.pharmacare.R;
 
 public class PopupClass {
     //PopupWindow display method
 
-    public void showPopupWindow(final View view) {
+    public void showPopupWindow(final View view, String title) {
 
 
         //Create a View object yourself through inflater
@@ -32,25 +32,22 @@ public class PopupClass {
         final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
 
         //Set the location of the window on the screen
-        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
 
+        popupWindow.setOutsideTouchable(false);
+        popupWindow.setAnimationStyle(R.style.popup_window_animation_phone);
+        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
         //Initialize the elements of our window, install the handler
 
         TextView test2 = popupView.findViewById(R.id.titleText);
-//        test2.setText(R.string.textTitle);
+        test2.setText(title);
 
-        Button buttonEdit = popupView.findViewById(R.id.messageButton);
-        buttonEdit.setOnClickListener(new View.OnClickListener() {
+        ImageView iv_close=popupView.findViewById(R.id.iv_close);
+        iv_close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                //As an example, display the message
-                Toast.makeText(view.getContext(), "Wow, popup action button", Toast.LENGTH_SHORT).show();
-
+                popupWindow.dismiss();
             }
         });
-
-
 
         //Handler for clicking on the inactive zone of the window
 
