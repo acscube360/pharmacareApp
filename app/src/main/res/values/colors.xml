@@ -6,10 +6,14 @@
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="white">#FFFFFF</color>
     <color name="toolbar_bg">#064800</color>
     <color name="home_btn_bg">#F5F5F5</color>
     <color name="tv_stroke">#C4C4C4</color>
     <color name="et_hint">#606060</color>
     <color name="btn_back_bg">#096A00</color>
+    <color name="tab_bg">#E5F7F0</color>
+    <color name="tab_selected">#00B26A</color>
+    <color name="view_pager_header_text">#3F3F3F</color>
+
 </resources>

@@ -6,4 +6,5 @@
     <string name="add_a_prescription">Add a Prescription</string>
     <string name="camera_denied">App requires camera access to capture prescriptions .Please Allow Pharamacare to access your camera from device settings!</string>
     <string name="alert_denied_title">Access Denied!</string>
+
 </resources>

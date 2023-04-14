@@ -22,7 +22,7 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
     String item_code = "";
     Handler handler = new Handler();
     Runnable runnable;
-    int delay = 10000;
+    int delay = 1000;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
