@@ -15,5 +15,7 @@
     <color name="tab_bg">#E5F7F0</color>
     <color name="tab_selected">#00B26A</color>
     <color name="view_pager_header_text">#3F3F3F</color>
+    <color name="sweaper_del">#E50707</color>
+    <color name="confirm_bg">#E40707</color>
 
 </resources>

@@ -13,6 +13,8 @@ public interface Api {
     String HOST = "http://192.168.8.118";
     String BASE_URL = HOST + PORT + "api/";
 
-    @GET("orders/orders")
+    @GET("orders")
     Call<List<Order>> getAllOrders();
+
+    @GET("items/search?")
 }

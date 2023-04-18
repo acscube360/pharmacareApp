@@ -19,8 +19,10 @@ import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import com.example.pharmacare.adapter.OrderListAdapter;
 import com.example.pharmacare.fragment.ActiveOrderFragment;
 import com.example.pharmacare.fragment.CompleteOrderFragment;
+import com.example.pharmacare.model.IOrderDetailsSearch;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
@@ -30,10 +32,11 @@ public class OrdersListActivity extends AppCompatActivity implements View.OnClic
     private ImageView iv_top_filter;
     private FrameLayout simpleFrameLayout;
 
-
+    private int tabPosition = 0;
     private ViewPager viewpager;
     private TabLayout tabLayout;
     private EditText et_remark;
+    private IOrderDetailsSearch orderDetailsSearchListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,16 +54,26 @@ public class OrdersListActivity extends AppCompatActivity implements View.OnClic
         viewpager = (ViewPager) findViewById(R.id.viewpager);
 
 
-        ViewPagerAdapter pagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), 0);
-        pagerAdapter.addFragment(new CompleteOrderFragment(), "Complete Order");
-        pagerAdapter.addFragment(new ActiveOrderFragment(), "Active Order");
-        viewpager.setAdapter(pagerAdapter);
-
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager(), 0);
+        adapter.addFragment(new CompleteOrderFragment(), "Complete Order", 0);
+        adapter.addFragment(new ActiveOrderFragment(), "Active Order", 1);
+        orderDetailsSearchListener = adapter.getOrderDetailsSearchListener(0);
+        viewpager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewpager);
+
+//        final OrderListAdapter adapter = new OrderListAdapter(this, getSupportFragmentManager(), tabLayout.getTabCount());
+//        orderDetailsSearchListener = adapter.getOrderDetailsSearchListener(0);
+//        viewpager.setOffscreenPageLimit(2);
+//        viewpager.setAdapter(adapter);
+////        viewpager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+
+//
+
+
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-
+                orderDetailsSearchListener = adapter.getOrderDetailsSearchListener(tab.getPosition());
             }
 
             @Override
@@ -82,7 +95,10 @@ public class OrdersListActivity extends AppCompatActivity implements View.OnClic
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Toast.makeText(OrdersListActivity.this, s.toString()    , Toast.LENGTH_SHORT).show();
+//                Toast.makeText(OrdersListActivity.this, s.toString(), Toast.LENGTH_SHORT).show();
+                orderDetailsSearchListener.onSearch(s.toString());
+
+
             }
 
             @Override
@@ -92,18 +108,40 @@ public class OrdersListActivity extends AppCompatActivity implements View.OnClic
         });
     }
 
-    private class ViewPagerAdapter extends FragmentPagerAdapter {
+    private class ViewPagerAdapter extends FragmentPagerAdapter implements IOrderDetailsSearch{
         private List<Fragment> fragments = new ArrayList<>();
         private List<String> fragmentTitles = new ArrayList<>();
+        private IOrderDetailsSearch iOrderDetailsSearch;
+        private IOrderDetailsSearch iActiveOrderDetailsSearch;
 
         public ViewPagerAdapter(@NonNull FragmentManager fm, int behavior) {
             super(fm, behavior);
         }
 
         //add fragment to the viewpager
-        public void addFragment(Fragment fragment, String title) {
+        public void addFragment(Fragment fragment, String title, int position) {
+
             fragments.add(fragment);
             fragmentTitles.add(title);
+//            switch (position) {
+//                case 0:
+            iOrderDetailsSearch = new IOrderDetailsSearch() {
+                @Override
+                public void onSearch(String inputString) {
+                    new CompleteOrderFragment().onSearch(inputString);
+                }
+            };
+//            }
+        }
+
+        public IOrderDetailsSearch getOrderDetailsSearchListener(int position) {
+
+            if (position == 0) {
+                return iOrderDetailsSearch;
+            } else if (position == 1) {
+                return iActiveOrderDetailsSearch;
+            }
+            return null;
         }
 
         @NonNull
@@ -122,6 +160,11 @@ public class OrdersListActivity extends AppCompatActivity implements View.OnClic
         @Override
         public CharSequence getPageTitle(int position) {
             return fragmentTitles.get(position);
+        }
+
+        @Override
+        public void onSearch(String inputString) {
+                iOrderDetailsSearch.onSearch(inputString);
         }
     }
 

@@ -4,13 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fragment.ActiveOrderFragment"
-    android:background="@color/btn_back_bg">
+    android:background="@color/white">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
+        android:background="@color/white"
+        android:id="@+id/rv_active_order"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Active order"
-        android:gravity="center"/>
+        android:layout_height="match_parent"/>
 
 </FrameLayout>

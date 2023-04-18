@@ -25,6 +25,25 @@ public class OrderListAdapter extends FragmentPagerAdapter {
         super(fm);
         myContext = context;
         this.totalTabs = totalTabs;
+        setupFragments();
+    }
+
+
+
+
+
+
+    @Override
+    public CharSequence getPageTitle(int position) {
+        String title = null;
+        if (position == 0) {
+            title = "Complete Order";
+        } else {
+            title = "Active Order";
+
+            return title;
+        }
+        return  title;
     }
 
     @NonNull
@@ -57,4 +76,22 @@ public class OrderListAdapter extends FragmentPagerAdapter {
         }
         return null;
     }
+
+    private void setupFragments() {
+        completeOrderFragment = new CompleteOrderFragment();
+        completeIOrderDetailsSearch = new IOrderDetailsSearch() {
+            @Override
+            public void onSearch(String inputString) {
+                completeOrderFragment.filterTransactions(inputString);
+            }
+        };
+        activeOrderFragment = new ActiveOrderFragment();
+        activeIOrderDetailsSearch = new IOrderDetailsSearch() {
+            @Override
+            public void onSearch(String inputString) {
+                activeOrderFragment.filterTransactions(inputString);
+            }
+        };
+    }
+
 }

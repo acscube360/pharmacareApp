@@ -14,6 +14,12 @@ public class Order {
     public Order() {
     }
 
+    public Order(String remark, String created, String lastModifiedBy) {
+        this.remark = remark;
+        this.created = created;
+        this.lastModifiedBy = lastModifiedBy;
+    }
+
     public Order(String remark, int status, String imageUrl, int id, String created, String createdBy, String lastModified, String lastModifiedBy) {
         this.remark = remark;
         this.status = status;
