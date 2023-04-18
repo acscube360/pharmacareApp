@@ -10,11 +10,12 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.example.pharmacare.R;
+import com.example.pharmacare.model.Item;
 
 public class PopupClass {
     //PopupWindow display method
 
-    public void showPopupWindow(final View view, String title) {
+    public void showPopupWindow(final View view, Item item) {
 
 
         //Create a View object yourself through inflater
@@ -39,7 +40,7 @@ public class PopupClass {
         //Initialize the elements of our window, install the handler
 
         TextView test2 = popupView.findViewById(R.id.titleText);
-        test2.setText(title);
+        test2.setText(item.getName());
 
         ImageView iv_close=popupView.findViewById(R.id.iv_close);
         iv_close.setOnClickListener(new View.OnClickListener() {

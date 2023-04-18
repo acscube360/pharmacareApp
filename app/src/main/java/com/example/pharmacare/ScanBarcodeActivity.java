@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.Ringtone;
@@ -26,6 +27,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.example.pharmacare.model.Item;
+import com.example.pharmacare.ui.PopupClass;
+import com.example.pharmacare.utility.RetrofitClient;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
@@ -38,6 +42,11 @@ import com.journeyapps.barcodescanner.BarcodeResult;
 import com.journeyapps.barcodescanner.DecoratedBarcodeView;
 
 import java.io.IOException;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ScanBarcodeActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "ScanBarcodeActivity";
@@ -51,6 +60,8 @@ public class ScanBarcodeActivity extends AppCompatActivity implements View.OnCli
     private ToneGenerator toneGen1;
     TextView tv_scan;
     private String barcodeData;
+    private View rootView;
+    private boolean isFoundItem=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +72,7 @@ public class ScanBarcodeActivity extends AppCompatActivity implements View.OnCli
         btn_scan = findViewById(R.id.btn_scan);
         btn_scan.setOnClickListener(this);
         surfaceView = findViewById(R.id.surface_view);
+        rootView = findViewById(R.id.barcode_layout);
 //        tv_text = findViewById(R.id.tv_text);
 //        barcodeView=findViewById(R. id.zxing_barcode_scanner);
 //        barcodeView.setVisibility(View.GONE);
@@ -88,7 +100,8 @@ public class ScanBarcodeActivity extends AppCompatActivity implements View.OnCli
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_scan:
-                if (!isBarcodeDetected){
+                if (!isBarcodeDetected && !isFoundItem){
+
                     surfaceView.setVisibility(View.VISIBLE);
                 }else {
                     Intent intent = new Intent(ScanBarcodeActivity.this, AddItemActivity.class);
@@ -154,6 +167,7 @@ public class ScanBarcodeActivity extends AppCompatActivity implements View.OnCli
                             cameraSource.stop();
 
                             //  tv_scan.setText(barcodes.valueAt(0).displayValue);
+                            getItemByNameOrId(barcodes.valueAt(0).displayValue);
                             btn_scan.setText(barcodes.valueAt(0).displayValue);
                         }
                     });
@@ -182,5 +196,36 @@ public class ScanBarcodeActivity extends AppCompatActivity implements View.OnCli
 //        initialiseDetectorsAndSources();
 
 
+    }
+    private void getItemByNameOrId(String name) {
+        final ProgressDialog progressDialog = new ProgressDialog(ScanBarcodeActivity.this);
+        progressDialog.setCancelable(false); // set cancelable to false
+        progressDialog.setMessage("Please Wait"); // set message
+        progressDialog.show();
+        RetrofitClient.getInstance().getMyApi().getItemByNameOrId(name).enqueue(new Callback<List<Item>>() {
+            @Override
+            public void onResponse(Call<List<Item>> call, Response<List<Item>> response) {
+                progressDialog.dismiss();
+                if (response.isSuccessful()){
+
+                   btn_scan.setText(response.body().get(0).getName());
+                   isFoundItem=true;
+
+                }else{
+                    isFoundItem=false;
+                    Toast.makeText(ScanBarcodeActivity.this, "", Toast.LENGTH_SHORT).show();
+                }
+//                Log.d("response>>>", String.valueOf(response.body().size()));
+
+            }
+
+            @Override
+            public void onFailure(Call<List<Item>> call, Throwable t) {
+                t.printStackTrace();
+                isFoundItem=false;
+                progressDialog.dismiss();
+
+            }
+        });
     }
 }
