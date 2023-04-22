@@ -10,6 +10,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -20,25 +21,37 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.pharmacare.model.Item;
+import com.example.pharmacare.model.ItemBatch;
+import com.example.pharmacare.model.ItemSellingType;
+import com.example.pharmacare.model.SellingType;
 import com.example.pharmacare.ui.PopupClass;
+import com.example.pharmacare.utility.CheckNetwork;
 import com.example.pharmacare.utility.RetrofitClient;
 
+import org.json.JSONArray;
+
+import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class AddItemActivity extends AppCompatActivity implements View.OnClickListener {
 
-    ConstraintLayout layout;
-    ImageView iv_open_camera, iv_search;
-    String item_code = "";
-    Handler handler = new Handler();
-    Runnable runnable;
-    int delay = 1000;
-    TextView tv_top_title;
-    EditText et_search;
+    private ConstraintLayout layout;
+    private ImageView iv_open_camera, iv_search;
+    private String item_code = "";
+    private Handler handler = new Handler();
+    private Runnable runnable;
+    private int delay = 1000;
+    private TextView tv_top_title;
+    private EditText et_search;
+    private Item item;
+    private ArrayList<String> itemBatchnames;
+    private ArrayList<SellingType> sellingTypes, itemSellingTypes;
+    private boolean isFound = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,11 +74,13 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
         iv_open_camera.setOnClickListener(this);
         iv_search.setOnClickListener(this);
 
-        tv_top_title = findViewById(R.id.tv_top_title);
+
         et_search = findViewById(R.id.et_search);
 
+        tv_top_title = findViewById(R.id.tv_top_title);
         tv_top_title.setText("Add Items");
-
+        item = new Item();
+        sellingTypes = new ArrayList<>();
 
     }
 
@@ -73,10 +88,32 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_search:
-                getItemByNameOrId(et_search.getText().toString());
-//                PopupClass popupClass = new PopupClass();
-//                popupClass.showPopupWindow(v, item_code);
-//                layout.setBackgroundColor(Color.parseColor("#606060"));
+                if (!et_search.getText().toString().isEmpty()) {
+//                    if (CheckNetwork.isInternetAvailable(v.getContext()))
+                    getItemByNameOrId(et_search.getText().toString());
+
+                if (isFound) {
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                getItemBatches("Panadol 500mg");
+                                getSellingTypes(v);
+                            }
+                        }, 1500);
+                    }
+//                    else {
+//                        Toast.makeText(this, "Item Not found", Toast.LENGTH_SHORT).show();
+//
+//                    }
+                } else {
+                    Toast.makeText(this, "Please enter Item name/Id", Toast.LENGTH_SHORT).show();
+                }
+//                } else {
+//                    Toast.makeText(this, "Please Check your internet Connection", Toast.LENGTH_SHORT).show();
+//
+//                }
+
                 break;
             case R.id.iv_open_camera:
                 Intent intent = new Intent(v.getContext(), ScanBarcodeActivity.class);
@@ -86,55 +123,127 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    @Override
-    protected void onResume() {
-//        popupWithItem();
-        super.onResume();
-
-    }
-
-    private void popupWithItem() {
-//        if (!item_code.isEmpty()) {
-//            handler.postDelayed(runnable = new Runnable() {
-//                public void run() {
-//                    handler.postDelayed(runnable, delay);
-//                    PopupClass popupClass = new PopupClass();
-//                    popupClass.showPopupWindow(getWindow().getDecorView().getRootView(), item_code);
-//                }
-//            }, delay);
-//
-////            Toast.makeText(this, item_code, Toast.LENGTH_SHORT).show();
-//        }
-    }
-
 
     private void getItemByNameOrId(String name) {
+        item = new Item();
         final ProgressDialog progressDialog = new ProgressDialog(AddItemActivity.this);
         progressDialog.setCancelable(false); // set cancelable to false
-        progressDialog.setMessage("Please Wait"); // set message
+        progressDialog.setMessage("Searching...."); // set message
         progressDialog.show();
         RetrofitClient.getInstance().getMyApi().getItemByNameOrId(name).enqueue(new Callback<List<Item>>() {
             @Override
             public void onResponse(Call<List<Item>> call, Response<List<Item>> response) {
-                progressDialog.dismiss();
-                if (response.isSuccessful()){
 
-                    PopupClass popupClass = new PopupClass();
-                    popupClass.showPopupWindow(getCurrentFocus(), response.body().get(0));
+                if (response.isSuccessful()) {
+                    Log.e("response>>>", String.valueOf(response.body().size()));
+                    Log.e("request>>>", String.valueOf(call.request().url()));
+                    progressDialog.dismiss();
 
-                }else{
-                    Toast.makeText(AddItemActivity.this, response.raw().toString(), Toast.LENGTH_SHORT).show();
+                    item = response.body().get(0);
+                   isFound = true;
+                    Log.e("name", item.getName());
+                    Log.e("barcode", item.getBarcode());
+               Log.e("isItemFound", (String.valueOf(isFound)));
+
+//                    PopupClass popupClass = new PopupClass();
+//                    popupClass.showPopupWindow(getWindow().getDecorView().getRootView(), item);
+                } else {
+                    isFound=false;
+                    progressDialog.dismiss();
+                    Toast.makeText(AddItemActivity.this, "Cannot find requested item ", Toast.LENGTH_SHORT).show();
+
                 }
-//                Log.d("response>>>", String.valueOf(response.body().size()));
+//
 
             }
 
             @Override
             public void onFailure(Call<List<Item>> call, Throwable t) {
                 t.printStackTrace();
+                Toast.makeText(AddItemActivity.this, "Connection Error ", Toast.LENGTH_SHORT).show();
+
                 progressDialog.dismiss();
 
             }
         });
+//        Toast.makeText(AddItemActivity.this, item.getName(), Toast.LENGTH_SHORT).show();
+
+
+    }
+
+    private void getItemBatches(String name) {
+        itemBatchnames = new ArrayList<>();
+        Log.e(TAG, "getItemBatches: >>>>>>>>>" + name);
+        RetrofitClient.getInstance().getMyApi().getItemBatches(name).enqueue(new Callback<List<ItemBatch>>() {
+            @Override
+            public void onResponse(Call<List<ItemBatch>> call, Response<List<ItemBatch>> response) {
+                Log.e("response>>>>>>>>>", response.raw().toString());
+                if (response.isSuccessful()) {
+                    itemBatchnames.add("Select the batch");
+                    for (int i = 0; i < response.body().size(); i++) {
+                        itemBatchnames.add(response.body().get(i).getName());
+                        Log.e("add>>", response.body().get(i).toString());
+                    }
+
+                } else {
+                    Log.e("error>>>>>>>>>", response.raw().toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<ItemBatch>> call, Throwable t) {
+                Toast.makeText(AddItemActivity.this, "Connection Error ", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+        Log.e("batchnames size", String.valueOf(itemBatchnames.size()));
+
+    }
+
+    private void getSellingTypes(View v) {
+
+        RetrofitClient.getInstance().getMyApi().getAllSellingTypes().enqueue(new Callback<List<SellingType>>() {
+            @Override
+            public void onResponse(Call<List<SellingType>> call, Response<List<SellingType>> response) {
+                if (response.isSuccessful()) {
+
+                    for (int j = 0; j < response.body().size(); j++) {
+                        sellingTypes.add(response.body().get(j));
+                    }
+                    itemSellingTypes = new ArrayList<>();
+                    itemSellingTypes.add(new SellingType("Selling type", 0));
+
+                    if (item.getItemSellingTypes()!=null){
+                        for (ItemSellingType iSt : item.getItemSellingTypes()) {
+                            for (SellingType st : sellingTypes) {
+                                if (iSt.getId() == st.getId()) {
+                                    itemSellingTypes.add(st);
+                                }
+                            }
+
+                        }
+                    }
+
+                    PopupClass popupClass = new PopupClass();
+                    popupClass.showPopupWindow(v, item, itemBatchnames, itemSellingTypes);
+                } else {
+                    Toast.makeText(AddItemActivity.this, "Connection Error ", Toast.LENGTH_SHORT).show();
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<SellingType>> call, Throwable t) {
+                t.printStackTrace();
+                Log.e("request>>>>>", call.request().url().toString());
+                Toast.makeText(AddItemActivity.this, "Server error ", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 }

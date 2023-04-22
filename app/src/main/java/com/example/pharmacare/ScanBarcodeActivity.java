@@ -58,52 +58,35 @@ public class ScanBarcodeActivity extends AppCompatActivity implements View.OnCli
     private CameraSource cameraSource;
     private static final int REQUEST_CAMERA_PERMISSION = 201;
     private ToneGenerator toneGen1;
-    TextView tv_scan;
+    TextView tv_scan, tv_top_title;
     private String barcodeData;
     private View rootView;
-    private boolean isFoundItem=false;
+    private boolean isFoundItem = false;
+    private Item resultItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan_barcode);
-//        findViewById(R.id.btn_scan).setOnClickListener(this);
-//        tv_scan = findViewById(R.id.tv_scan);
+
         btn_scan = findViewById(R.id.btn_scan);
         btn_scan.setOnClickListener(this);
         surfaceView = findViewById(R.id.surface_view);
         rootView = findViewById(R.id.barcode_layout);
-//        tv_text = findViewById(R.id.tv_text);
-//        barcodeView=findViewById(R. id.zxing_barcode_scanner);
-//        barcodeView.setVisibility(View.GONE);
-//        barcodeView.decodeContinuous(new BarcodeCallback() {
-//            @Override
-//            public void barcodeResult(BarcodeResult result) {
-//                Log.d(TAG, "barcodeResult:"+result.getText());
-//                beepSound();
-//            }
-//        });
+        tv_top_title = findViewById(R.id.tv_top_title);
+        tv_top_title.setText("Scan Bar Code");
+        resultItem = new Item();
         initialiseDetectorsAndSources();
-    }
-
-    protected void beepSound() {
-        try {
-            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
-            r.play();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_scan:
-                if (!isBarcodeDetected && !isFoundItem){
+                if (!isBarcodeDetected && !isFoundItem) {
 
                     surfaceView.setVisibility(View.VISIBLE);
-                }else {
+                } else {
                     Intent intent = new Intent(ScanBarcodeActivity.this, AddItemActivity.class);
                     intent.putExtra("item_code", btn_scan.getText().toString());  // pass your values and retrieve them in the other Activity using AnyKeyName
                     startActivity(intent);
@@ -159,7 +142,7 @@ public class ScanBarcodeActivity extends AppCompatActivity implements View.OnCli
             public void receiveDetections(Detector.Detections<Barcode> detections) {
                 final SparseArray<Barcode> barcodes = detections.getDetectedItems();
                 if (barcodes.size() != 0) {
-                    isBarcodeDetected=true;
+                    isBarcodeDetected = true;
                     Handler handler = new Handler(Looper.getMainLooper());
                     handler.post(new Runnable() {
                         @Override
@@ -168,7 +151,7 @@ public class ScanBarcodeActivity extends AppCompatActivity implements View.OnCli
 
                             //  tv_scan.setText(barcodes.valueAt(0).displayValue);
                             getItemByNameOrId(barcodes.valueAt(0).displayValue);
-                            btn_scan.setText(barcodes.valueAt(0).displayValue);
+                            //  btn_scan.setText(barcodes.valueAt(0).displayValue);
                         }
                     });
 
@@ -178,10 +161,6 @@ public class ScanBarcodeActivity extends AppCompatActivity implements View.OnCli
         });
     }
 
-    private void startQRScanner() {
-
-        new IntentIntegrator(this).initiateScan();
-    }
 
     @Override
     protected void onPause() {
@@ -197,6 +176,7 @@ public class ScanBarcodeActivity extends AppCompatActivity implements View.OnCli
 
 
     }
+
     private void getItemByNameOrId(String name) {
         final ProgressDialog progressDialog = new ProgressDialog(ScanBarcodeActivity.this);
         progressDialog.setCancelable(false); // set cancelable to false
@@ -206,13 +186,13 @@ public class ScanBarcodeActivity extends AppCompatActivity implements View.OnCli
             @Override
             public void onResponse(Call<List<Item>> call, Response<List<Item>> response) {
                 progressDialog.dismiss();
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
 
-                   btn_scan.setText(response.body().get(0).getName());
-                   isFoundItem=true;
+                    btn_scan.setText(response.body().get(0).getName());
+                    isFoundItem = true;
 
-                }else{
-                    isFoundItem=false;
+                } else {
+                    isFoundItem = false;
                     Toast.makeText(ScanBarcodeActivity.this, "", Toast.LENGTH_SHORT).show();
                 }
 //                Log.d("response>>>", String.valueOf(response.body().size()));
@@ -222,10 +202,20 @@ public class ScanBarcodeActivity extends AppCompatActivity implements View.OnCli
             @Override
             public void onFailure(Call<List<Item>> call, Throwable t) {
                 t.printStackTrace();
-                isFoundItem=false;
+                isFoundItem = false;
                 progressDialog.dismiss();
 
             }
         });
+    }
+
+    private void setResponsToItemObject( Response<List<Item>> response){
+
+        resultItem.setId(response.body().get(0).getId());
+        resultItem.setName(response.body().get(0).getName());
+        resultItem.setMeasurement(response.body().get(0).getMeasurement());
+        resultItem.setImageUrl(response.body().get(0).getImageUrl());
+        resultItem.setBarcode(response.body().get(0).getBarcode());
+
     }
 }

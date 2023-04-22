@@ -16,17 +16,17 @@ public class Item {
     private String strength;
     private String drugCode;
     private ArrayList<ItemSellingType> itemSellingTypes;
-    private String itemBatches;
+    private ArrayList<ItemBatch> itemBatches;
     private String created;
     private String createdBy;
     private String lastModified;
     private String lastModifiedBy;
 
 
+    public Item() {
+    }
 
-
-
-    public Item(int id, String name, String measurement, String imageUrl, String barcode, String expirationThreshold, String itemSubCategoryId, ItemSubCategory itemSubCategory, String status, int minimumOrderQuantity, String strength, String drugCode, ArrayList<ItemSellingType> itemSellingTypes, String itemBatches, String created, String createdBy, String lastModified, String lastModifiedBy) {
+    public Item(int id, String name, String measurement, String imageUrl, String barcode, String expirationThreshold, String itemSubCategoryId, ItemSubCategory itemSubCategory, String status, int minimumOrderQuantity, String strength, String drugCode, ArrayList<ItemSellingType> itemSellingTypes, ArrayList<ItemBatch> itemBatches , String created, String createdBy, String lastModified, String lastModifiedBy) {
         this.id = id;
         this.name = name;
         this.measurement = measurement;
@@ -151,11 +151,11 @@ public class Item {
         this.itemSellingTypes = itemSellingTypes;
     }
 
-    public String getItemBatches() {
+    public ArrayList<ItemBatch> getItemBatches() {
         return itemBatches;
     }
 
-    public void setItemBatches(String itemBatches) {
+    public void setItemBatches(ArrayList<ItemBatch> itemBatches) {
         this.itemBatches = itemBatches;
     }
 
