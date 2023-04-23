@@ -10,6 +10,9 @@ public class SellingType {
         this.id = id;
     }
 
+    public SellingType() {
+    }
+
     public String getName() {
         return name;
     }

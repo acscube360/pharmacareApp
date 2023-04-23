@@ -1,23 +1,35 @@
 package com.example.pharmacare.ui;
 
+import static android.content.Context.MODE_PRIVATE;
+
+import android.content.SharedPreferences;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.widget.AppCompatButton;
 
+import com.example.pharmacare.AddItemActivity;
 import com.example.pharmacare.R;
 import com.example.pharmacare.model.Item;
 import com.example.pharmacare.model.ItemBatch;
 import com.example.pharmacare.model.OrderItem;
 import com.example.pharmacare.model.SellingType;
+import com.google.gson.Gson;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -29,7 +41,12 @@ public class PopupClass {
     ArrayList<SellingType> mSellingTypes = new ArrayList<>();
     private Spinner batch_spinner, sell_type_spinner;
     AppCompatButton btn_cancel, btn_add;
-    ArrayList<OrderItem> orderItemArrayList=new ArrayList<>();
+    ArrayList<OrderItem> orderItemArrayList = new ArrayList<>();
+    private String itemBatch = "";
+    private SellingType itemSellingType = new SellingType();
+    private int quantity = 0;
+    private EditText et_item_count;
+    JSONArray jsonArray = new JSONArray();
 
     public void showPopupWindow(final View view, Item item, ArrayList<String> batches, ArrayList<SellingType> sellingTypes) {
 
@@ -71,6 +88,7 @@ public class PopupClass {
 //        new GetItemBatchAsyncTask().execute("",item.getName(),"");
         batch_spinner = popupView.findViewById(R.id.batch_spinner);
         sell_type_spinner = popupView.findViewById(R.id.sell_type_spinner);
+        et_item_count = popupView.findViewById(R.id.et_item_count);
 
         ArrayAdapter aa = new ArrayAdapter(view.getContext(), android.R.layout.simple_spinner_item, itemBatchnames);
         aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -84,7 +102,7 @@ public class PopupClass {
         batch_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
+                itemBatch = itemBatchnames.get(position);
                 // batch_spinner.setSelection(position);
             }
 
@@ -97,7 +115,7 @@ public class PopupClass {
         sell_type_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
+                itemSellingType = mSellingTypes.get(position);
             }
 
             @Override
@@ -110,7 +128,33 @@ public class PopupClass {
         btn_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                try {
+                    quantity = Integer.parseInt(et_item_count.getText().toString());
 
+                } catch (NumberFormatException ex) {
+                    ex.printStackTrace();
+                    quantity = 0;
+                }
+                if (isAllSet(v)) {
+//                    Toast.makeText(v.getContext(), "all data is set", Toast.LENGTH_SHORT).show();
+                    SharedPreferences preferences = v.getContext().getSharedPreferences("Order_items", MODE_PRIVATE);
+                 String test=   preferences.getString("ORDER_DATA", "");
+                    OrderItem orderItem = new OrderItem(item.getName(), itemBatch, itemSellingType, quantity);
+//
+                    try {
+                        jsonArray=new JSONArray( test);
+                        jsonArray.put( new JSONObject(new Gson().toJson(orderItem)));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    SharedPreferences.Editor editor = preferences.edit();
+                    Log.e("jsonArray", jsonArray.toString());
+                    editor.putString("ORDER_DATA", jsonArray.toString());
+                    editor.apply();
+
+                    AddItemActivity.showAndUpdateItems();
+                    popupWindow.dismiss();
+                }
             }
         });
         popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
@@ -129,4 +173,22 @@ public class PopupClass {
         return sellTypesStrings;
     }
 
+    private boolean isAllSet(View v) {
+        boolean isAllSEt = false;
+        if (itemBatch.isEmpty()) {
+            isAllSEt = false;
+            Toast.makeText(v.getContext(), "Please select item batch", Toast.LENGTH_SHORT).show();
+
+        } else if (itemSellingType.getName().isEmpty()) {
+            isAllSEt = false;
+            Toast.makeText(v.getContext(), "Please select item batch", Toast.LENGTH_SHORT).show();
+        } else if (quantity < 1) {
+            isAllSEt = false;
+            Toast.makeText(v.getContext(), "Please enter valid quantity", Toast.LENGTH_SHORT).show();
+
+        } else {
+            isAllSEt = true;
+        }
+        return isAllSEt;
+    }
 }

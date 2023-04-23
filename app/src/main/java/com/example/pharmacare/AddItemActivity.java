@@ -9,6 +9,7 @@ import androidx.core.app.ActivityCompat;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,12 +18,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.pharmacare.model.Item;
 import com.example.pharmacare.model.ItemBatch;
 import com.example.pharmacare.model.ItemSellingType;
+import com.example.pharmacare.model.OrderItem;
 import com.example.pharmacare.model.SellingType;
 import com.example.pharmacare.ui.PopupClass;
 import com.example.pharmacare.utility.CheckNetwork;
@@ -51,14 +54,17 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
     private Item item;
     private ArrayList<String> itemBatchnames;
     private ArrayList<SellingType> sellingTypes, itemSellingTypes;
+    private ArrayList<OrderItem> orderItemArrayList;
     private boolean isFound = false;
+    private static LinearLayout ll_header;
+    View v;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_item);
 
-
+        getSellingTypes();
         initView();
 
     }
@@ -74,6 +80,7 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
         iv_open_camera.setOnClickListener(this);
         iv_search.setOnClickListener(this);
 
+        ll_header = findViewById(R.id.ll_header);
 
         et_search = findViewById(R.id.et_search);
 
@@ -81,7 +88,15 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
         tv_top_title.setText("Add Items");
         item = new Item();
         sellingTypes = new ArrayList<>();
+        orderItemArrayList = new ArrayList<>();
 
+        if (orderItemArrayList.size() == 0) {
+            ll_header.setVisibility(View.GONE);
+        }
+        SharedPreferences preferences = getSharedPreferences("Order_items", MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("ORDER_DATA", "[Aruna]");
+        editor.apply();
     }
 
     @Override
@@ -89,30 +104,29 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
         switch (v.getId()) {
             case R.id.iv_search:
                 if (!et_search.getText().toString().isEmpty()) {
-//                    if (CheckNetwork.isInternetAvailable(v.getContext()))
-                    getItemByNameOrId(et_search.getText().toString());
+                    if (CheckNetwork.isInternetAvailable(v.getContext())) {
+                        getItemByNameOrId(et_search.getText().toString(), v);
 
-                if (isFound) {
+
                         final Handler handler = new Handler();
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                getItemBatches("Panadol 500mg");
-                                getSellingTypes(v);
+                                if (isFound) {
+                                        getItemBatches(item.getName(), v);
+                                }
                             }
-                        }, 1500);
+                        }, 1000);
+
+                    } else {
+                        Toast.makeText(this, "Please Check your internet Connection", Toast.LENGTH_SHORT).show();
+
                     }
-//                    else {
-//                        Toast.makeText(this, "Item Not found", Toast.LENGTH_SHORT).show();
-//
-//                    }
                 } else {
                     Toast.makeText(this, "Please enter Item name/Id", Toast.LENGTH_SHORT).show();
+
+
                 }
-//                } else {
-//                    Toast.makeText(this, "Please Check your internet Connection", Toast.LENGTH_SHORT).show();
-//
-//                }
 
                 break;
             case R.id.iv_open_camera:
@@ -124,7 +138,7 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
     }
 
 
-    private void getItemByNameOrId(String name) {
+    private void getItemByNameOrId(String name, View v) {
         item = new Item();
         final ProgressDialog progressDialog = new ProgressDialog(AddItemActivity.this);
         progressDialog.setCancelable(false); // set cancelable to false
@@ -135,20 +149,19 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
             public void onResponse(Call<List<Item>> call, Response<List<Item>> response) {
 
                 if (response.isSuccessful()) {
+
                     Log.e("response>>>", String.valueOf(response.body().size()));
                     Log.e("request>>>", String.valueOf(call.request().url()));
                     progressDialog.dismiss();
 
                     item = response.body().get(0);
-                   isFound = true;
+                    isFound = true;
                     Log.e("name", item.getName());
                     Log.e("barcode", item.getBarcode());
-               Log.e("isItemFound", (String.valueOf(isFound)));
+                    Log.e("isItemFound", (String.valueOf(isFound)));
 
-//                    PopupClass popupClass = new PopupClass();
-//                    popupClass.showPopupWindow(getWindow().getDecorView().getRootView(), item);
                 } else {
-                    isFound=false;
+                    isFound = false;
                     progressDialog.dismiss();
                     Toast.makeText(AddItemActivity.this, "Cannot find requested item ", Toast.LENGTH_SHORT).show();
 
@@ -167,11 +180,12 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
             }
         });
 //        Toast.makeText(AddItemActivity.this, item.getName(), Toast.LENGTH_SHORT).show();
+//        getItemBatches(item.getName(),v);
 
 
     }
 
-    private void getItemBatches(String name) {
+    private void getItemBatches(String name, View v) {
         itemBatchnames = new ArrayList<>();
         Log.e(TAG, "getItemBatches: >>>>>>>>>" + name);
         RetrofitClient.getInstance().getMyApi().getItemBatches(name).enqueue(new Callback<List<ItemBatch>>() {
@@ -184,9 +198,23 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
                         itemBatchnames.add(response.body().get(i).getName());
                         Log.e("add>>", response.body().get(i).toString());
                     }
+                    itemSellingTypes = new ArrayList<>();
+                    itemSellingTypes.add(new SellingType("Selling type", 0));
+                    PopupClass popupClass = new PopupClass();
+                    if (item.getItemSellingTypes() != null) {
+                        for (ItemSellingType iSt : item.getItemSellingTypes()) {
+                            for (SellingType st : sellingTypes) {
+                                if (iSt.getId() == st.getId()) {
+                                    itemSellingTypes.add(st);
+                                }
+                            }
+
+                        }
+                    }
+                    popupClass.showPopupWindow(v, item, itemBatchnames, itemSellingTypes);
 
                 } else {
-                    Log.e("error>>>>>>>>>", response.raw().toString());
+                    Toast.makeText(AddItemActivity.this, "Cannot find requested item-batch", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -197,10 +225,10 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
             }
         });
         Log.e("batchnames size", String.valueOf(itemBatchnames.size()));
-
+//        getSellingTypes(v);
     }
 
-    private void getSellingTypes(View v) {
+    private void getSellingTypes() {
 
         RetrofitClient.getInstance().getMyApi().getAllSellingTypes().enqueue(new Callback<List<SellingType>>() {
             @Override
@@ -210,23 +238,7 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
                     for (int j = 0; j < response.body().size(); j++) {
                         sellingTypes.add(response.body().get(j));
                     }
-                    itemSellingTypes = new ArrayList<>();
-                    itemSellingTypes.add(new SellingType("Selling type", 0));
-
-                    if (item.getItemSellingTypes()!=null){
-                        for (ItemSellingType iSt : item.getItemSellingTypes()) {
-                            for (SellingType st : sellingTypes) {
-                                if (iSt.getId() == st.getId()) {
-                                    itemSellingTypes.add(st);
-                                }
-                            }
-
-                        }
-                    }
-
-                    PopupClass popupClass = new PopupClass();
-                    popupClass.showPopupWindow(v, item, itemBatchnames, itemSellingTypes);
-                } else {
+                   } else {
                     Toast.makeText(AddItemActivity.this, "Connection Error ", Toast.LENGTH_SHORT).show();
 
                 }
@@ -242,6 +254,9 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
         });
     }
 
+    public static void showAndUpdateItems(){
+        ll_header.setVisibility(View.VISIBLE);
+    }
     @Override
     protected void onResume() {
         super.onResume();
