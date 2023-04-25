@@ -42,6 +42,7 @@
                     android:layout_gravity="center"
                     android:layout_weight="0.4"
                     android:text="Name"
+                    android:layout_marginLeft="10dp"
                     android:textColor="@color/view_pager_header_text" />
 
                 <TextView
@@ -50,7 +51,6 @@
                     android:layout_gravity="center"
                     android:layout_weight="0.4"
                     android:text="Type"
-                    android:textAlignment="textStart"
                     android:textColor="@color/view_pager_header_text" />
 
                 <TextView
@@ -71,22 +71,35 @@
 
 
         </LinearLayout>
-<RelativeLayout
-    android:layout_below="@+id/ll_header"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginLeft="25dp"
-    android:layout_marginRight="25dp"
-    android:layout_marginBottom="145dp">
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_order_items"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
 
-        />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/ll_header"
+            android:layout_marginLeft="25dp"
+            android:layout_marginRight="25dp"
+            android:layout_marginBottom="145dp">
 
-</RelativeLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_order_items"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                 />
 
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_confirm"
+                android:layout_width="120dp"
+                android:layout_height="40dp"
+                android:layout_below="@id/rv_order_items"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/btn_next_background"
+                android:text="Confirm"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
+        </RelativeLayout>
 
 
         <RelativeLayout

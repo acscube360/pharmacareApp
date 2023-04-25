@@ -138,12 +138,12 @@ public class PopupClass {
                 if (isAllSet(v)) {
 //                    Toast.makeText(v.getContext(), "all data is set", Toast.LENGTH_SHORT).show();
                     SharedPreferences preferences = v.getContext().getSharedPreferences("Order_items", MODE_PRIVATE);
-                 String test=   preferences.getString("ORDER_DATA", "");
+                    String test = preferences.getString("ORDER_DATA", "");
                     OrderItem orderItem = new OrderItem(item.getName(), itemBatch, itemSellingType, quantity);
 //
                     try {
-                        jsonArray=new JSONArray( test);
-                        jsonArray.put( new JSONObject(new Gson().toJson(orderItem)));
+                        jsonArray = new JSONArray(test);
+                        jsonArray.put(new JSONObject(new Gson().toJson(orderItem)));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -152,7 +152,7 @@ public class PopupClass {
                     editor.putString("ORDER_DATA", jsonArray.toString());
                     editor.apply();
 
-                    AddItemActivity.showAndUpdateItems();
+                    AddItemActivity.showAndUpdateItems(v);
                     popupWindow.dismiss();
                 }
             }

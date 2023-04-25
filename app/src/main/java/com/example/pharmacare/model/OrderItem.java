@@ -6,6 +6,8 @@ public class OrderItem {
     private SellingType  sellingType;
     private int quantity;
 
+    public OrderItem() {
+    }
 
     public OrderItem(String name, String batch_no, SellingType sellingType, int quantity) {
         this.name = name;

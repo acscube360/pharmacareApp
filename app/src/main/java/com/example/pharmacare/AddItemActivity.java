@@ -2,19 +2,26 @@ package com.example.pharmacare;
 
 import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -22,6 +29,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.pharmacare.adapter.OrderItemListAdapter;
 import com.example.pharmacare.model.Item;
 import com.example.pharmacare.model.ItemBatch;
 import com.example.pharmacare.model.ItemSellingType;
@@ -32,6 +40,8 @@ import com.example.pharmacare.utility.CheckNetwork;
 import com.example.pharmacare.utility.RetrofitClient;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,14 +67,21 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
     private ArrayList<OrderItem> orderItemArrayList;
     private boolean isFound = false;
     private static LinearLayout ll_header;
+    private static AppCompatButton btn_confirm;
+    private static RecyclerView rv_order_items;
+    private static OrderItemListAdapter adapter;
     View v;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_item);
-
-        getSellingTypes();
+        if (CheckNetwork.isInternetAvailable(this)) {
+            getSellingTypes();
+        } else {
+            Toast.makeText(this, "Please turn on your Internet Connection", Toast.LENGTH_SHORT).show();
+        }
         initView();
 
     }
@@ -75,6 +92,7 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
         layout = findViewById(R.id.constraint);
 
         iv_open_camera = findViewById(R.id.iv_open_camera);
+        btn_confirm = findViewById(R.id.btn_confirm);
         iv_search = findViewById(R.id.iv_search);
 
         iv_open_camera.setOnClickListener(this);
@@ -83,6 +101,7 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
         ll_header = findViewById(R.id.ll_header);
 
         et_search = findViewById(R.id.et_search);
+        rv_order_items = findViewById(R.id.rv_order_items);
 
         tv_top_title = findViewById(R.id.tv_top_title);
         tv_top_title.setText("Add Items");
@@ -92,11 +111,24 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
 
         if (orderItemArrayList.size() == 0) {
             ll_header.setVisibility(View.GONE);
+            btn_confirm.setVisibility(View.GONE);
         }
+//        orderItemArrayList.add(new OrderItem("test 1","batch1",new SellingType("selname",1),10));
+        adapter = new OrderItemListAdapter(AddItemActivity.this, orderItemArrayList);
+        rv_order_items.setLayoutManager(new LinearLayoutManager(this));
+        rv_order_items.setAdapter(adapter);
+
         SharedPreferences preferences = getSharedPreferences("Order_items", MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("ORDER_DATA", "[Aruna]");
+        editor.putString("ORDER_DATA", "[]");
         editor.apply();
+
+        btn_confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showCustomDialog();
+            }
+        });
     }
 
     @Override
@@ -113,7 +145,7 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
                             @Override
                             public void run() {
                                 if (isFound) {
-                                        getItemBatches(item.getName(), v);
+                                    getItemBatches(item.getName(), v);
                                 }
                             }
                         }, 1000);
@@ -134,6 +166,8 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
                 intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 intent.putExtra("item_code", "");
                 startActivity(intent);
+                break;
+
         }
     }
 
@@ -220,6 +254,7 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
 
             @Override
             public void onFailure(Call<List<ItemBatch>> call, Throwable t) {
+                t.printStackTrace();
                 Toast.makeText(AddItemActivity.this, "Connection Error ", Toast.LENGTH_SHORT).show();
 
             }
@@ -229,7 +264,10 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void getSellingTypes() {
-
+        final ProgressDialog progressDialog = new ProgressDialog(AddItemActivity.this);
+        progressDialog.setCancelable(false); // set cancelable to false
+        progressDialog.setMessage("Searching...."); // set message
+        progressDialog.show();
         RetrofitClient.getInstance().getMyApi().getAllSellingTypes().enqueue(new Callback<List<SellingType>>() {
             @Override
             public void onResponse(Call<List<SellingType>> call, Response<List<SellingType>> response) {
@@ -238,14 +276,16 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
                     for (int j = 0; j < response.body().size(); j++) {
                         sellingTypes.add(response.body().get(j));
                     }
-                   } else {
+                } else {
                     Toast.makeText(AddItemActivity.this, "Connection Error ", Toast.LENGTH_SHORT).show();
 
                 }
+                progressDialog.dismiss();
             }
 
             @Override
             public void onFailure(Call<List<SellingType>> call, Throwable t) {
+                progressDialog.dismiss();
                 t.printStackTrace();
                 Log.e("request>>>>>", call.request().url().toString());
                 Toast.makeText(AddItemActivity.this, "Server error ", Toast.LENGTH_SHORT).show();
@@ -254,11 +294,98 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
         });
     }
 
-    public static void showAndUpdateItems(){
+    public static void showAndUpdateItems(View v) {
+        SharedPreferences preferences = v.getContext().getSharedPreferences("Order_items", MODE_PRIVATE);
+        String test = preferences.getString("ORDER_DATA", "");
+
+        try {
+            JSONArray jsonArray = new JSONArray(test);
+            rv_order_items.removeAllViews();
+            adapter.getOrderItemArrayList().clear();
+            for (int i = 0; i < jsonArray.length(); i++) {
+                Log.e("jsonArray.length()>>>>>>>>>>>", String.valueOf(jsonArray.length()));
+                Log.e("i>>>>>>>>>>>>>>>>>>>>>>>>>>>>", String.valueOf(i));
+                JSONObject object = jsonArray.getJSONObject(i);
+//
+                OrderItem item = new OrderItem();
+                item.setName(object.getString("name"));
+                item.setBatch_no(object.getString("batch_no"));
+                item.setQuantity(object.getInt("quantity"));
+
+                JSONObject selJob = object.getJSONObject("sellingType");
+                SellingType sellingType = new SellingType();
+                sellingType.setId(selJob.getInt("id"));
+                sellingType.setName(selJob.getString("name"));
+
+                item.setSellingType(sellingType);
+
+
+                adapter.getOrderItemArrayList().add(item);
+
+                adapter.notifyDataSetChanged();
+
+            }
+
+//
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         ll_header.setVisibility(View.VISIBLE);
+        btn_confirm.setVisibility(View.VISIBLE);
+
     }
+
+    @SuppressLint("ResourceAsColor")
+    private void showCustomDialog() {
+//        ViewGroup viewGroup = findViewById(android.R.id.content);
+        View dialogView = LayoutInflater.from(AddItemActivity.this).inflate(R.layout.layout_confirm_dialog, null, false);
+        AlertDialog.Builder builder = new AlertDialog.Builder(AddItemActivity.this);
+        builder.setView(dialogView);
+        builder.setCancelable(false);
+        AlertDialog alertDialog = builder.create();
+        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        TextView tv_confirm_message = dialogView.findViewById(R.id.tv_confirm_message);
+        tv_confirm_message.setText("Are you Sure to Submit this order ?");
+        AppCompatButton btn_confirm_dialog = dialogView.findViewById(R.id.btn_confirm_dialog);
+        btn_confirm_dialog.setBackgroundResource(R.drawable.btn_next_background);
+
+        dialogView.findViewById(R.id.iv_close).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+
+        dialogView.findViewById(R.id.btn_cancel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+
+        btn_confirm_dialog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goToHome();
+            }
+        });
+        alertDialog.show();
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(0, 0);
+
+    }
+
+    private void goToHome(){
+        Intent intent=new Intent(new Intent(AddItemActivity.this,MainActivity.class));
+        intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        startActivity(intent);    }
 }
