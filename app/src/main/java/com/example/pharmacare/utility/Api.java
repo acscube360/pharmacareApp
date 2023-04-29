@@ -14,7 +14,10 @@ import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.Response;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface Api {
@@ -34,4 +37,10 @@ public interface Api {
 
     @GET("sellingType")
     Call<List<SellingType>> getAllSellingTypes();
+
+    @GET("orders/activeOrders")
+    Call<List<Order>> getActiveOrders();
+
+    @DELETE("orders/{id}")
+    Call<JSONObject> deleteActiveOrder(@Path("id") int orderId);
 }

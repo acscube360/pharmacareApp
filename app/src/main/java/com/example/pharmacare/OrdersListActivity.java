@@ -53,19 +53,22 @@ public class OrdersListActivity extends AppCompatActivity implements View.OnClic
         tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
         viewpager = (ViewPager) findViewById(R.id.viewpager);
 
-
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager(), 0);
-        adapter.addFragment(new CompleteOrderFragment(), "Complete Order", 0);
-        adapter.addFragment(new ActiveOrderFragment(), "Active Order", 1);
-        orderDetailsSearchListener = adapter.getOrderDetailsSearchListener(0);
-        viewpager.setAdapter(adapter);
-        tabLayout.setupWithViewPager(viewpager);
-
-//        final OrderListAdapter adapter = new OrderListAdapter(this, getSupportFragmentManager(), tabLayout.getTabCount());
+        tabLayout.addTab(tabLayout.newTab().setText("Complete Order"));
+        tabLayout.addTab(tabLayout.newTab().setText("Active Order"));
+//        tabLayout.addTab(tabLayout.newTab().setText("Favourite"));
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+//        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager(), 0);
+//        adapter.addFragment(new CompleteOrderFragment(), "Complete Order", 0);
+//        adapter.addFragment(new ActiveOrderFragment(), "Active Order", 1);
 //        orderDetailsSearchListener = adapter.getOrderDetailsSearchListener(0);
-//        viewpager.setOffscreenPageLimit(2);
 //        viewpager.setAdapter(adapter);
-////        viewpager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+//        tabLayout.setupWithViewPager(viewpager);
+
+        OrderListAdapter adapter = new OrderListAdapter(this, getSupportFragmentManager(), tabLayout.getTabCount());
+        orderDetailsSearchListener = adapter.getOrderDetailsSearchListener(0);
+        viewpager.setOffscreenPageLimit(2);
+        viewpager.setAdapter(adapter);
+        viewpager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
 //
 
@@ -73,6 +76,7 @@ public class OrdersListActivity extends AppCompatActivity implements View.OnClic
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
+                viewpager.setCurrentItem(tab.getPosition());
                 orderDetailsSearchListener = adapter.getOrderDetailsSearchListener(tab.getPosition());
             }
 
@@ -108,65 +112,65 @@ public class OrdersListActivity extends AppCompatActivity implements View.OnClic
         });
     }
 
-    private class ViewPagerAdapter extends FragmentPagerAdapter implements IOrderDetailsSearch{
-        private List<Fragment> fragments = new ArrayList<>();
-        private List<String> fragmentTitles = new ArrayList<>();
-        private IOrderDetailsSearch iOrderDetailsSearch;
-        private IOrderDetailsSearch iActiveOrderDetailsSearch;
-
-        public ViewPagerAdapter(@NonNull FragmentManager fm, int behavior) {
-            super(fm, behavior);
-        }
-
-        //add fragment to the viewpager
-        public void addFragment(Fragment fragment, String title, int position) {
-
-            fragments.add(fragment);
-            fragmentTitles.add(title);
-//            switch (position) {
-//                case 0:
-            iOrderDetailsSearch = new IOrderDetailsSearch() {
-                @Override
-                public void onSearch(String inputString) {
-                    new CompleteOrderFragment().onSearch(inputString);
-                }
-            };
+//    private class ViewPagerAdapter extends FragmentPagerAdapter implements IOrderDetailsSearch {
+//        private List<Fragment> fragments = new ArrayList<>();
+//        private List<String> fragmentTitles = new ArrayList<>();
+//        private IOrderDetailsSearch iOrderDetailsSearch;
+//        private IOrderDetailsSearch iActiveOrderDetailsSearch;
+//
+//        public ViewPagerAdapter(@NonNull FragmentManager fm, int behavior) {
+//            super(fm, behavior);
+//        }
+//
+//        //add fragment to the viewpager
+//        public void addFragment(Fragment fragment, String title, int position) {
+//
+//            fragments.add(fragment);
+//            fragmentTitles.add(title);
+////            switch (position) {
+////                case 0:
+////            iOrderDetailsSearch = new IOrderDetailsSearch() {
+////                @Override
+////                public void onSearch(String inputString) {
+////                    new CompleteOrderFragment().onSearch(inputString);
+////                }
+////            };
+////            }
+//        }
+//
+//        public IOrderDetailsSearch getOrderDetailsSearchListener(int position) {
+//
+//            if (position == 0) {
+//                return iOrderDetailsSearch;
+//            } else if (position == 1) {
+//                return iActiveOrderDetailsSearch;
 //            }
-        }
-
-        public IOrderDetailsSearch getOrderDetailsSearchListener(int position) {
-
-            if (position == 0) {
-                return iOrderDetailsSearch;
-            } else if (position == 1) {
-                return iActiveOrderDetailsSearch;
-            }
-            return null;
-        }
-
-        @NonNull
-        @Override
-        public Fragment getItem(int position) {
-            return fragments.get(position);
-        }
-
-        @Override
-        public int getCount() {
-            return fragments.size();
-        }
-
-        //to setup title of the tab layout
-        @Nullable
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return fragmentTitles.get(position);
-        }
-
-        @Override
-        public void onSearch(String inputString) {
-                iOrderDetailsSearch.onSearch(inputString);
-        }
-    }
+//            return null;
+//        }
+//
+//        @NonNull
+//        @Override
+//        public Fragment getItem(int position) {
+//            return fragments.get(position);
+//        }
+//
+//        @Override
+//        public int getCount() {
+//            return fragments.size();
+//        }
+//
+//        //to setup title of the tab layout
+//        @Nullable
+//        @Override
+//        public CharSequence getPageTitle(int position) {
+//            return fragmentTitles.get(position);
+//        }
+//
+//        @Override
+//        public void onSearch(String inputString) {
+//            iOrderDetailsSearch.onSearch(inputString);
+//        }
+//    }
 
     @Override
     public void onClick(View v) {

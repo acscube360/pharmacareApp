@@ -18,8 +18,8 @@ public class OrderListAdapter extends FragmentPagerAdapter {
     CompleteOrderFragment completeOrderFragment;
     ActiveOrderFragment activeOrderFragment;
 
-    IOrderDetailsSearch completeIOrderDetailsSearch;
-    IOrderDetailsSearch activeIOrderDetailsSearch;
+    private IOrderDetailsSearch completeOrderSearch;
+    private IOrderDetailsSearch activeOrderSearch;
 
     public OrderListAdapter(Context context, @NonNull FragmentManager fm, int totalTabs) {
         super(fm);
@@ -28,32 +28,16 @@ public class OrderListAdapter extends FragmentPagerAdapter {
         setupFragments();
     }
 
-
-
-
-
-
-    @Override
-    public CharSequence getPageTitle(int position) {
-        String title = null;
-        if (position == 0) {
-            title = "Complete Order";
-        } else {
-            title = "Active Order";
-
-            return title;
-        }
-        return  title;
-    }
-
     @NonNull
     @Override
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
+//                completeOrderFragment = new CompleteOrderFragment();
                 return completeOrderFragment;
 
             case 1:
+//                activeOrderFragment = new ActiveOrderFragment();
                 return activeOrderFragment;
 
             default:
@@ -62,36 +46,38 @@ public class OrderListAdapter extends FragmentPagerAdapter {
 
     }
 
-    @Override
-    public int getCount() {
-        return totalTabs;
-    }
-
     public IOrderDetailsSearch getOrderDetailsSearchListener(int position) {
 
         if (position == 0) {
-            return completeIOrderDetailsSearch;
+            return completeOrderSearch;
         } else if (position == 1) {
-            return activeIOrderDetailsSearch;
+            return activeOrderSearch;
         }
         return null;
     }
 
     private void setupFragments() {
         completeOrderFragment = new CompleteOrderFragment();
-        completeIOrderDetailsSearch = new IOrderDetailsSearch() {
+        completeOrderSearch = new IOrderDetailsSearch() {
             @Override
             public void onSearch(String inputString) {
                 completeOrderFragment.filterTransactions(inputString);
             }
         };
+
         activeOrderFragment = new ActiveOrderFragment();
-        activeIOrderDetailsSearch = new IOrderDetailsSearch() {
+        activeOrderSearch = new IOrderDetailsSearch() {
             @Override
             public void onSearch(String inputString) {
                 activeOrderFragment.filterTransactions(inputString);
             }
         };
+
+    }
+
+    @Override
+    public int getCount() {
+        return totalTabs;
     }
 
 }

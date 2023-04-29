@@ -1,6 +1,8 @@
 package com.example.pharmacare.model;
 
-public class Order {
+import java.io.Serializable;
+
+public class Order implements Serializable {
 
     private String remark;
     private int status;

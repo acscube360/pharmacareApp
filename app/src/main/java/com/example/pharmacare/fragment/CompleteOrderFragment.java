@@ -3,20 +3,24 @@ package com.example.pharmacare.fragment;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.pharmacare.R;
 import com.example.pharmacare.adapter.CompletedOrderAdapter;
 import com.example.pharmacare.model.IOrderDetailsSearch;
 import com.example.pharmacare.model.Order;
 import com.example.pharmacare.utility.Api;
+import com.example.pharmacare.utility.CheckNetwork;
 import com.example.pharmacare.utility.RetrofitClient;
 
 import java.io.IOException;
@@ -33,41 +37,47 @@ public class CompleteOrderFragment extends Fragment implements IOrderDetailsSear
     ArrayList<Order> completedOrderArrayList;
     RecyclerView rv_completed_order;
     View view;
-    public CompletedOrderAdapter adapter ;
+    public CompletedOrderAdapter adapter;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-         view = inflater.inflate(R.layout.fragment_complete_order, container, false);
+        view = inflater.inflate(R.layout.fragment_complete_order, container, false);
         completedOrderArrayList = new ArrayList<>();
         rv_completed_order = view.findViewById(R.id.rv_completed_order);
-        adapter = new CompletedOrderAdapter(getActivity(), completedOrderArrayList);
-//     getCompletedOrderList();
+        if (CheckNetwork.isInternetAvailable(getActivity())) {
+            getCompletedOrderList();
+        } else {
+            Toast.makeText(getActivity(), "Please Check your Internet connection", Toast.LENGTH_SHORT).show();
+        }
+
         return view;
     }
 
     private void getCompletedOrderList() {
+
         final ProgressDialog progressDialog = new ProgressDialog(getActivity());
         progressDialog.setCancelable(false); // set cancelable to false
-        progressDialog.setMessage("Please Wait"); // set message
+        progressDialog.setMessage("Fetching Orders..."); // set message
         progressDialog.show();
 
         RetrofitClient.getInstance().getMyApi().getAllOrders().enqueue(new Callback<List<Order>>() {
             @Override
             public void onResponse(Call<List<Order>> call, Response<List<Order>> response) {
-//                Log.e(TAG, "onResponse: "+response.body().toString());
+                Log.e(TAG, "onResponse: " + call.request().url());
                 if (response.isSuccessful()) {
 
                     for (int i = 0; i < response.body().size(); i++) {
-//                        if (response.body().get(i).getStatus() == 3) {
+                        if (response.body().get(i).getStatus() == 3) {
                             Order order = new Order();
                             order = response.body().get(i);
                             completedOrderArrayList.add(order);
-//                        }
+                        }
                     }
                     populateList(completedOrderArrayList);
-                }else{
-                    Log.e("error","error");
+                } else {
+                    Log.e("error", "error");
                 }
 
                 progressDialog.dismiss();
@@ -85,19 +95,24 @@ public class CompleteOrderFragment extends Fragment implements IOrderDetailsSear
     }
 
     private void populateList(ArrayList<Order> orders) {
+
         CompletedOrderAdapter adapter = new CompletedOrderAdapter(getActivity(), orders);
         rv_completed_order.setLayoutManager(new LinearLayoutManager(view.getContext()));
-       // rv_completed_order.setLayoutManager(linearLayoutManager);
+        // rv_completed_order.setLayoutManager(linearLayoutManager);
         rv_completed_order.setAdapter(adapter);
-       // progressDialog.dismiss();
+        // progressDialog.dismiss();
+
+
     }
+
     public void filterTransactions(String searchText) {
-        if (rv_completed_order != null && rv_completed_order.getAdapter() != null && !searchText.isEmpty()) {
+        if (rv_completed_order != null && rv_completed_order.getAdapter() != null ) {
+//            && !searchText.isEmpty()
             // mAdapter.filterData(search_text);
             try {
-//                ((CompletedOrderAdapter) rv_completed_order.getAdapter()).getFilter().filter(searchText);
-                CompletedOrderAdapter adapter = this.adapter;
-                adapter.getFilter().filter(searchText);
+                ((CompletedOrderAdapter) rv_completed_order.getAdapter()).getFilter().filter(searchText);
+//                CompletedOrderAdapter adapter = this.adapter;
+//                adapter.getFilter().filter(searchText);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

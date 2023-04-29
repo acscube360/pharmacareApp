@@ -87,8 +87,6 @@
                 android:layout_marginBottom="20dp"
                 app:tabTextAppearance="@style/CustomTextAppearanceTab">
 
-
-
             </com.google.android.material.tabs.TabLayout>
             <include layout="@layout/order_view_pager_headers"
                 />
