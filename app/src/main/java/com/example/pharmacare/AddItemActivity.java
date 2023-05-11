@@ -33,9 +33,11 @@ import com.example.pharmacare.adapter.OrderItemListAdapter;
 import com.example.pharmacare.model.Item;
 import com.example.pharmacare.model.ItemBatch;
 import com.example.pharmacare.model.ItemSellingType;
+import com.example.pharmacare.model.Order;
 import com.example.pharmacare.model.OrderItem;
 import com.example.pharmacare.model.SellingType;
 import com.example.pharmacare.ui.PopupClass;
+import com.example.pharmacare.utility.Api;
 import com.example.pharmacare.utility.CheckNetwork;
 import com.example.pharmacare.utility.RetrofitClient;
 
@@ -70,8 +72,9 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
     private static AppCompatButton btn_confirm;
     private static RecyclerView rv_order_items;
     private static OrderItemListAdapter adapter;
-
+    private boolean fromActiveList;
     View v;
+    private Order order = new Order();
 
 
     @Override
@@ -79,32 +82,39 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_item);
         v = getWindow().getDecorView().getRootView();
-        if (CheckNetwork.isInternetAvailable(this)) {
-            getSellingTypes();
-        } else {
-            Toast.makeText(this, "Please turn on your Internet Connection", Toast.LENGTH_SHORT).show();
-        }
+        fromActiveList = getIntent().getBooleanExtra("fromActiveList", false);
+        order = (Order) getIntent().getSerializableExtra("order");
+
         initView();
-        item_code=getIntent().getStringExtra("item_code");
-        if (!item_code.isEmpty()){
-            if (CheckNetwork.isInternetAvailable(getApplicationContext())) {
-                getItemByNameOrId(item_code, v);
+        if (CheckNetwork.isInternetAvailable(this)) {
+            if (fromActiveList == true) {
 
-
-                final Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (isFound) {
-                            getItemBatches(item.getName(), v);
-                        }
-                    }
-                }, 1000);
-
+                getItems(order);
             } else {
-                Toast.makeText(this, "Please Check your internet Connection", Toast.LENGTH_SHORT).show();
 
+                getSellingTypes();
+
+                item_code = getIntent().getStringExtra("item_code");
+                if (!item_code.isEmpty()) {
+
+                    getItemByNameOrId(item_code, v);
+
+
+                    final Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (isFound) {
+                                getItemBatches(item.getName(), v);
+                            }
+                        }
+                    }, 1000);
+
+
+                }
             }
+        } else {
+            Toast.makeText(this, "Please check your Internet Connection", Toast.LENGTH_SHORT).show();
         }
 
 
@@ -407,8 +417,41 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
 
     }
 
-    private void goToHome(){
-        Intent intent=new Intent(new Intent(AddItemActivity.this,MainActivity.class));
+    private void goToHome() {
+        Intent intent = new Intent(new Intent(AddItemActivity.this, MainActivity.class));
         intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-        startActivity(intent);    }
+        startActivity(intent);
+    }
+
+    private void getItems(Order order) {
+        String url = Api.BASE_URL + "oderBatchItems?$filter=orderId eq " + order.getId() + "&$select=totalPrice,unitPrice,totalCost,quantity,id&$expand=itemBatch($expand=item($select=name,id))&$expand=sellingType($select=name)&$expand=itemBatch($select=item)";
+        RetrofitClient.getInstance().getMyApi().getItemListOfOrder(url).enqueue(new Callback<List<OrderItem>>() {
+            @Override
+            public void onResponse(Call<List<OrderItem>> call, Response<List<OrderItem>> response) {
+                Log.e("request", call.request().url().toString());
+                Log.e("response", response.raw().toString());
+                if (response.isSuccessful()) {
+                    for (int i = 0; i < response.body().size(); i++) {
+                        orderItemArrayList.add(response.body().get(i));
+                        orderItemArrayList.get(i).setName(orderItemArrayList.get(i).getItemBatch().getItem().getName());
+//                        Log.e("item name", orderItemArrayList.get(i).getItemBatch().getItem().getName());
+//                        Log.e("sell type", orderItemArrayList.get(i).getSellingType().getName());
+//                        Log.e("quantity", String.valueOf(orderItemArrayList.get(i).getQuantity()));
+                    }
+                    adapter = new OrderItemListAdapter(AddItemActivity.this, orderItemArrayList);
+                    rv_order_items.setLayoutManager(new LinearLayoutManager(AddItemActivity.this));
+                    rv_order_items.setAdapter(adapter);
+                } else {
+                    Toast.makeText(AddItemActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<OrderItem>> call, Throwable t) {
+                t.printStackTrace();
+                Toast.makeText(AddItemActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 }

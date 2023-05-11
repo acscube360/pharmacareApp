@@ -60,6 +60,8 @@ public class ActiveOrderAdapter extends RecyclerView.Adapter<ActiveOrderAdapter.
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), AddItemActivity.class);
                 intent.putExtra("item_code", "");
+                intent.putExtra("order", order);
+                intent.putExtra("fromActiveList",true);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 v.getContext().startActivity(intent);
             }
