@@ -3,7 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="46dp"
+    tools:ignore="MissingConstraints">
     <LinearLayout
         android:id="@+id/ll_item_bg"
         android:layout_width="match_parent"
@@ -40,4 +43,13 @@
             android:textColor="@color/view_pager_header_text" />
 
     </LinearLayout>
+    <View
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/tv_stroke" />
+
+
+</RelativeLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

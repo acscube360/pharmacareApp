@@ -2,21 +2,27 @@ package com.example.pharmacare;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.pharmacare.adapter.OrderListAdapter;
@@ -82,7 +88,7 @@ public class OrdersListActivity extends AppCompatActivity implements View.OnClic
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-
+                et_remark.setText("");
             }
 
             @Override
@@ -112,72 +118,50 @@ public class OrdersListActivity extends AppCompatActivity implements View.OnClic
         });
     }
 
-//    private class ViewPagerAdapter extends FragmentPagerAdapter implements IOrderDetailsSearch {
-//        private List<Fragment> fragments = new ArrayList<>();
-//        private List<String> fragmentTitles = new ArrayList<>();
-//        private IOrderDetailsSearch iOrderDetailsSearch;
-//        private IOrderDetailsSearch iActiveOrderDetailsSearch;
-//
-//        public ViewPagerAdapter(@NonNull FragmentManager fm, int behavior) {
-//            super(fm, behavior);
-//        }
-//
-//        //add fragment to the viewpager
-//        public void addFragment(Fragment fragment, String title, int position) {
-//
-//            fragments.add(fragment);
-//            fragmentTitles.add(title);
-////            switch (position) {
-////                case 0:
-////            iOrderDetailsSearch = new IOrderDetailsSearch() {
-////                @Override
-////                public void onSearch(String inputString) {
-////                    new CompleteOrderFragment().onSearch(inputString);
-////                }
-////            };
-////            }
-//        }
-//
-//        public IOrderDetailsSearch getOrderDetailsSearchListener(int position) {
-//
-//            if (position == 0) {
-//                return iOrderDetailsSearch;
-//            } else if (position == 1) {
-//                return iActiveOrderDetailsSearch;
-//            }
-//            return null;
-//        }
-//
-//        @NonNull
-//        @Override
-//        public Fragment getItem(int position) {
-//            return fragments.get(position);
-//        }
-//
-//        @Override
-//        public int getCount() {
-//            return fragments.size();
-//        }
-//
-//        //to setup title of the tab layout
-//        @Nullable
-//        @Override
-//        public CharSequence getPageTitle(int position) {
-//            return fragmentTitles.get(position);
-//        }
-//
-//        @Override
-//        public void onSearch(String inputString) {
-//            iOrderDetailsSearch.onSearch(inputString);
-//        }
-//    }
+
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_top_filter:
-                Toast.makeText(this, "filter", Toast.LENGTH_SHORT).show();
+                showCustomDialog();
                 break;
         }
+    }
+
+    private void showCustomDialog() {
+//        ViewGroup viewGroup = findViewById(android.R.id.content);
+        View dialogView = LayoutInflater.from(OrdersListActivity.this).inflate(R.layout.layout_filter_dialog, null, false);
+        AlertDialog.Builder builder = new AlertDialog.Builder(OrdersListActivity.this);
+        builder.setView(dialogView);
+        builder.setCancelable(false);
+        AlertDialog alertDialog = builder.create();
+        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//        TextView tv_confirm_message = dialogView.findViewById(R.id.tv_confirm_message);
+//        tv_confirm_message.setText("Are you Sure to Submit this order ?");
+//        AppCompatButton btn_confirm_dialog = dialogView.findViewById(R.id.btn_confirm_dialog);
+//        btn_confirm_dialog.setBackgroundResource(R.drawable.btn_next_background);
+
+        dialogView.findViewById(R.id.iv_close).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+
+        dialogView.findViewById(R.id.btn_cancel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+
+//        btn_confirm_dialog.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                goToHome();
+//            }
+//        });
+        alertDialog.show();
     }
 }

@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.pharmacare.R;
@@ -143,6 +144,9 @@ public class ActiveOrderFragment extends Fragment implements IOrderDetailsSearch
                 builder.setCancelable(false);
                 AlertDialog alertDialog = builder.create();
                 alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                String msg = "Are you Sure to Delete this order " + adapter.getItem(position).getRemark();
+                TextView tv_confirm_message = dialogView.findViewById(R.id.tv_confirm_message);
+                tv_confirm_message.setText(msg);
                 adapter.removeItem(position);
                 dialogView.findViewById(R.id.iv_close).setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -169,7 +173,7 @@ public class ActiveOrderFragment extends Fragment implements IOrderDetailsSearch
                                 Log.e("request", String.valueOf(call.request().url()));
                                 Log.e("response", response.body().toString());
 
-                                if (!response.isSuccessful()){
+                                if (!response.isSuccessful()) {
                                     adapter.restoreItem(order, position);
                                 }
                                 rv_completed_order.scrollToPosition(position);
@@ -192,6 +196,7 @@ public class ActiveOrderFragment extends Fragment implements IOrderDetailsSearch
         };
         ItemTouchHelper itemTouchhelper = new ItemTouchHelper(swipeToDeleteCallback);
         itemTouchhelper.attachToRecyclerView(rv_completed_order);
+
 
     }
 

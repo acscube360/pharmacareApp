@@ -3,6 +3,8 @@ package com.example.pharmacare.utility;
 import com.example.pharmacare.model.Item;
 import com.example.pharmacare.model.ItemBatch;
 import com.example.pharmacare.model.Order;
+import com.example.pharmacare.model.OrderBatchItem;
+import com.example.pharmacare.model.OrderItem;
 import com.example.pharmacare.model.SellingType;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -19,6 +21,7 @@ import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import retrofit2.http.Url;
 
 public interface Api {
     //    String HOST="https://localhost:";
@@ -43,4 +46,14 @@ public interface Api {
 
     @DELETE("orders/{id}")
     Call<JSONObject> deleteActiveOrder(@Path("id") int orderId);
+
+    @GET("oderBatchItems")
+    Call<List<OrderBatchItem>> getOrderBatchItems();
+
+//    @GET("oderBatchItems?$filter=orderId eq orderID &$select=totalPrice,unitPrice,totalCost,quantity,id&$expand=itemBatch($expand=item($select=name,id))&$expand=sellingType($select=name)&$expand=itemBatch($select=item)")
+//    Call<List<OrderItem>> getItemListOfOrder(@Query("orderID") int page);
+
+    @GET
+    Call<List<OrderItem>> getItemListOfOrder(@Url String s);
+
 }

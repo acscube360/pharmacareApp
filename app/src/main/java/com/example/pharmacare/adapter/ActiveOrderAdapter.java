@@ -1,6 +1,7 @@
 package com.example.pharmacare.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +13,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.pharmacare.AddItemActivity;
 import com.example.pharmacare.R;
+import com.example.pharmacare.ShowOrderDetailsActivity;
 import com.example.pharmacare.model.Order;
 
 import java.text.DateFormat;
@@ -52,6 +55,15 @@ public class ActiveOrderAdapter extends RecyclerView.Adapter<ActiveOrderAdapter.
         }
         holder.tv_order_name.setText(order.getRemark());
         holder.tv_sup_by.setText(order.getLastModifiedBy());
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), AddItemActivity.class);
+                intent.putExtra("item_code", "");
+                intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                v.getContext().startActivity(intent);
+            }
+        });
     }
 
     public ArrayList<Order> getOrderList() {
@@ -108,10 +120,7 @@ public class ActiveOrderAdapter extends RecyclerView.Adapter<ActiveOrderAdapter.
             tv_sup_by = itemView.findViewById(R.id.tv_sup_by);
         }
 
-        public void removeItem(int position) {
-            activeOrderList.remove(position);
-            notifyItemRemoved(position);
-        }
+
     }
 
     private class ItemFilter extends Filter {

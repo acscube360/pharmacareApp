@@ -18,6 +18,7 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -52,6 +53,11 @@ public class AddNewOrderActivity extends AppCompatActivity implements View.OnCli
         findViewById(R.id.iv_open_gallery).setOnClickListener(this);
         findViewById(R.id.btn_back).setOnClickListener(this);
         findViewById(R.id.btn_next).setOnClickListener(this);
+//
+        SharedPreferences preferences = getSharedPreferences("Order_items", MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("ORDER_DATA", "[]");
+        editor.apply();
 
         recView_selected = findViewById(R.id.recView_selected);
         prescriptionsAdapter = new ShowAddedPrescriptionsAdapter(uriArrayList);

@@ -3,6 +3,7 @@ package com.example.pharmacare.model;
 public class OrderItem {
     private String name;
     private String batch_no;
+    private ItemBatch itemBatch;
     private SellingType  sellingType;
     private int quantity;
 
@@ -46,5 +47,13 @@ public class OrderItem {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public ItemBatch getItemBatch() {
+        return itemBatch;
+    }
+
+    public void setItemBatch(ItemBatch itemBatch) {
+        this.itemBatch = itemBatch;
     }
 }

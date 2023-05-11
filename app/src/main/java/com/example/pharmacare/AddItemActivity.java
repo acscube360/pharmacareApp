@@ -70,6 +70,7 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
     private static AppCompatButton btn_confirm;
     private static RecyclerView rv_order_items;
     private static OrderItemListAdapter adapter;
+
     View v;
 
 
@@ -77,12 +78,35 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_item);
+        v = getWindow().getDecorView().getRootView();
         if (CheckNetwork.isInternetAvailable(this)) {
             getSellingTypes();
         } else {
             Toast.makeText(this, "Please turn on your Internet Connection", Toast.LENGTH_SHORT).show();
         }
         initView();
+        item_code=getIntent().getStringExtra("item_code");
+        if (!item_code.isEmpty()){
+            if (CheckNetwork.isInternetAvailable(getApplicationContext())) {
+                getItemByNameOrId(item_code, v);
+
+
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (isFound) {
+                            getItemBatches(item.getName(), v);
+                        }
+                    }
+                }, 1000);
+
+            } else {
+                Toast.makeText(this, "Please Check your internet Connection", Toast.LENGTH_SHORT).show();
+
+            }
+        }
+
 
     }
 
@@ -118,10 +142,10 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
         rv_order_items.setLayoutManager(new LinearLayoutManager(this));
         rv_order_items.setAdapter(adapter);
 
-        SharedPreferences preferences = getSharedPreferences("Order_items", MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("ORDER_DATA", "[]");
-        editor.apply();
+//        SharedPreferences preferences = getSharedPreferences("Order_items", MODE_PRIVATE);
+//        SharedPreferences.Editor editor = preferences.edit();
+//        editor.putString("ORDER_DATA", "[]");
+//        editor.apply();
 
         btn_confirm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -164,7 +188,6 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.iv_open_camera:
                 Intent intent = new Intent(v.getContext(), ScanBarcodeActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                intent.putExtra("item_code", "");
                 startActivity(intent);
                 break;
 
@@ -184,15 +207,15 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
 
                 if (response.isSuccessful()) {
 
-                    Log.e("response>>>", String.valueOf(response.body().size()));
-                    Log.e("request>>>", String.valueOf(call.request().url()));
+//                    Log.e("response>>>", String.valueOf(response.body().size()));
+//                    Log.e("request>>>", String.valueOf(call.request().url()));
                     progressDialog.dismiss();
 
                     item = response.body().get(0);
                     isFound = true;
-                    Log.e("name", item.getName());
-                    Log.e("barcode", item.getBarcode());
-                    Log.e("isItemFound", (String.valueOf(isFound)));
+//                    Log.e("name", item.getName());
+//                    Log.e("barcode", item.getBarcode());
+//                    Log.e("isItemFound", (String.valueOf(isFound)));
 
                 } else {
                     isFound = false;
@@ -266,7 +289,7 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
     private void getSellingTypes() {
         final ProgressDialog progressDialog = new ProgressDialog(AddItemActivity.this);
         progressDialog.setCancelable(false); // set cancelable to false
-        progressDialog.setMessage("Searching...."); // set message
+        progressDialog.setMessage("Fetching Selling types...."); // set message
         progressDialog.show();
         RetrofitClient.getInstance().getMyApi().getAllSellingTypes().enqueue(new Callback<List<SellingType>>() {
             @Override
