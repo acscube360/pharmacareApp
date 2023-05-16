@@ -87,12 +87,13 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
 
         initView();
         if (CheckNetwork.isInternetAvailable(this)) {
+            getSellingTypes();
             if (fromActiveList == true) {
 
                 getItems(order);
             } else {
 
-                getSellingTypes();
+
 
                 item_code = getIntent().getStringExtra("item_code");
                 if (!item_code.isEmpty()) {
@@ -437,6 +438,10 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
 //                        Log.e("item name", orderItemArrayList.get(i).getItemBatch().getItem().getName());
 //                        Log.e("sell type", orderItemArrayList.get(i).getSellingType().getName());
 //                        Log.e("quantity", String.valueOf(orderItemArrayList.get(i).getQuantity()));
+                    }
+                    if (!orderItemArrayList.isEmpty()){
+                        ll_header.setVisibility(View.VISIBLE);
+                        btn_confirm.setVisibility(View.VISIBLE);
                     }
                     adapter = new OrderItemListAdapter(AddItemActivity.this, orderItemArrayList);
                     rv_order_items.setLayoutManager(new LinearLayoutManager(AddItemActivity.this));

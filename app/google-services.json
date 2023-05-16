@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "946441669322",
+    "project_id": "testpharamacare",
+    "storage_bucket": "testpharamacare.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:946441669322:android:a623a43624ace3c6258233",
+        "android_client_info": {
+          "package_name": "com.example.pharmacare"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "946441669322-geriaahv2i9o7uln1tntrdqttdd333k7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAjOB3qraBO7Sg2uIeKfnqRejVBB5NuxWU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "946441669322-geriaahv2i9o7uln1tntrdqttdd333k7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

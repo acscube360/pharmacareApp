@@ -16,6 +16,7 @@
             layout="@layout/top_tool_bar" />
 
         <ImageView
+            android:id="@+id/iv_presc"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/tbar"

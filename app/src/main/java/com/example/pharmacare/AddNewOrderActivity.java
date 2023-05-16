@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -23,15 +24,28 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.example.pharmacare.adapter.ShowAddedPrescriptionsAdapter;
+import com.example.pharmacare.utility.CheckNetwork;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class AddNewOrderActivity extends AppCompatActivity implements View.OnClickListener {
-
+    String url = "";
     ImageView iv_open_camera, iv_open_gallery;
     Uri image_uri;
     ShowAddedPrescriptionsAdapter prescriptionsAdapter;
@@ -42,6 +56,8 @@ public class AddNewOrderActivity extends AppCompatActivity implements View.OnCli
     private static final int STORAGE_PERMISSION_CODE = 101;
     private int cameraPermissionRequestCount = 0;
     private int storagePermissionRequestCount = 0;
+    FirebaseStorage storage;
+    StorageReference storageReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +81,9 @@ public class AddNewOrderActivity extends AppCompatActivity implements View.OnCli
         recView_selected.setAdapter(prescriptionsAdapter);
         prescriptionsAdapter.notifyDataSetChanged();
 
+        storage = FirebaseStorage.getInstance();
+        storageReference = storage.getReference();
+
     }
 
     @Override
@@ -78,11 +97,14 @@ public class AddNewOrderActivity extends AppCompatActivity implements View.OnCli
 
                 break;
             case R.id.btn_next:
+//                startActivity(new Intent(this,ShowPrescriptionActivity.class));
+                if (CheckNetwork.isInternetAvailable(v.getContext())) {
+                    uploadImage();
+                } else {
+                    Toast.makeText(this, "Please Check Your Internet Connection", Toast.LENGTH_SHORT).show();
+                }
 
-                Intent intent = new Intent(v.getContext(), AddItemActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                intent.putExtra("item_code", "");
-                startActivity(intent);
+
                 break;
 
             case R.id.btn_back:
@@ -166,7 +188,7 @@ public class AddNewOrderActivity extends AppCompatActivity implements View.OnCli
                     cameraPermissionRequestCount++;
                     break;
                 case STORAGE_PERMISSION_CODE:
-                   storagePermissionRequestCount++;
+                    storagePermissionRequestCount++;
                     break;
             }
 
@@ -197,7 +219,7 @@ public class AddNewOrderActivity extends AppCompatActivity implements View.OnCli
                 // Toast.makeText(AddNewOrderActivity.this, "Camera Permission Granted", Toast.LENGTH_SHORT) .show();
                 openCamera();
             } else {
-                showAlertDialog(cameraPermissionRequestCount,CAMERA_PERMISSION_CODE);
+                showAlertDialog(cameraPermissionRequestCount, CAMERA_PERMISSION_CODE);
                 //  checkPermission(Manifest.permission.CAMERA,CAMERA_PERMISSION_CODE);
                 //Toast.makeText(AddNewOrderActivity.this, "Camera Permission Denied", Toast.LENGTH_SHORT) .show();
             }
@@ -206,11 +228,12 @@ public class AddNewOrderActivity extends AppCompatActivity implements View.OnCli
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 openGallery();
             } else {
-                showAlertDialog(storagePermissionRequestCount,STORAGE_PERMISSION_CODE);            }
+                showAlertDialog(storagePermissionRequestCount, STORAGE_PERMISSION_CODE);
+            }
         }
     }
 
-    public void showAlertDialog(int count,int permissionCode) {
+    public void showAlertDialog(int count, int permissionCode) {
         String msg = "This app needs you to allow camera/Read storage permission in order to function.Will you allow it";
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 
@@ -230,7 +253,7 @@ public class AddNewOrderActivity extends AppCompatActivity implements View.OnCli
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface arg0, int arg1) {
-                            switch (permissionCode){
+                            switch (permissionCode) {
                                 case CAMERA_PERMISSION_CODE:
                                     checkPermission(Manifest.permission.CAMERA, CAMERA_PERMISSION_CODE);
                                     break;
@@ -254,5 +277,116 @@ public class AddNewOrderActivity extends AppCompatActivity implements View.OnCli
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
 
+    }
+
+    private void uploadImage() {
+
+        if (uriArrayList.size() != 0) {
+
+            // Code for showing progressDialog while uploading
+            ProgressDialog progressDialog
+                    = new ProgressDialog(this);
+            progressDialog.getWindow().setGravity(Gravity.CENTER);
+            progressDialog.setTitle("Uploading...");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+
+            // Defining the child of storageReference
+            StorageReference ref
+                    = storageReference
+                    .child(
+                            "images/"
+                                    + UUID.randomUUID().toString());
+
+            // adding listeners on upload
+            // or failure of image
+            for (Uri uri : uriArrayList) {
+                ref.putFile(uri)
+//                        .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+//                            @Override
+//                            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+//
+//                            }
+//                        })
+                        .addOnSuccessListener(
+                                new OnSuccessListener<UploadTask.TaskSnapshot>() {
+
+                                    @Override
+                                    public void onSuccess(
+                                            UploadTask.TaskSnapshot taskSnapshot) {
+
+                                        // Image uploaded successfully
+                                        // Dismiss dialog
+
+                                        progressDialog.dismiss();
+                                        Toast
+                                                .makeText(AddNewOrderActivity.this,
+                                                        "Image Uploaded!!",
+                                                        Toast.LENGTH_SHORT)
+                                                .show();
+                                        url = taskSnapshot.getStorage().getDownloadUrl().toString();
+                                        ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                            @Override
+                                            public void onSuccess(Uri uri) {
+                                                Log.e("uri", uri.toString());
+                                                Intent intent = new Intent(getApplicationContext(), ShowPrescriptionActivity.class);
+                                                intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+//            intent.putExtra("item_code", "");
+                                                intent.putExtra("url", uri.toString());
+                                                startActivity(intent);
+                                            }
+                                        }).addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                        });
+                                    }
+                                })
+
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                e.printStackTrace();
+                                // Error, Image not uploaded
+                                progressDialog.dismiss();
+                                Toast
+                                        .makeText(AddNewOrderActivity.this,
+                                                "Failed " + e.getMessage(),
+                                                Toast.LENGTH_SHORT)
+                                        .show();
+                            }
+                        })
+
+                        .addOnProgressListener(
+                                new OnProgressListener<UploadTask.TaskSnapshot>() {
+
+                                    // Progress Listener for loading
+                                    // percentage on the dialog box
+                                    @Override
+                                    public void onProgress(
+                                            UploadTask.TaskSnapshot taskSnapshot) {
+                                        double progress
+                                                = (100.0
+                                                * taskSnapshot.getBytesTransferred()
+                                                / taskSnapshot.getTotalByteCount());
+                                        progressDialog.setMessage(
+                                                "Uploading "
+                                                        + (int) progress + "%");
+                                    }
+                                });
+
+            }
+
+//            Intent intent = new Intent(this, ShowPrescriptionActivity.class);
+//            intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+////            intent.putExtra("item_code", "");
+//            intent.putExtra("url", "");
+//            startActivity(intent);
+
+
+        } else {
+            Toast.makeText(this, "Please Select Image to upload", Toast.LENGTH_SHORT).show();
+        }
     }
 }
