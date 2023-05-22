@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.example.pharmacare.R;
 import com.example.pharmacare.adapter.ActiveOrderAdapter;
+import com.example.pharmacare.adapter.CompletedOrderAdapter;
 import com.example.pharmacare.model.IOrderDetailsSearch;
 import com.example.pharmacare.model.Order;
 import com.example.pharmacare.utility.CheckNetwork;
@@ -29,7 +30,11 @@ import com.example.pharmacare.utility.SwipeToDeleteCallback;
 
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
@@ -199,9 +204,46 @@ public class ActiveOrderFragment extends Fragment implements IOrderDetailsSearch
 
 
     }
+    public void filterOrdersByDate(String date) {
+        Log.e("BeforeformattedDate",date);
+        try {
+            date=formatDate(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        if (rv_completed_order != null && rv_completed_order.getAdapter() != null ) {
+//            && !searchText.isEmpty()
+            // mAdapter.filterData(search_text);
+            try {
+                Log.e("formattedDate",date);
+                ((CompletedOrderAdapter) rv_completed_order.getAdapter()).getFilter().filter(date);
+//                CompletedOrderAdapter adapter = this.adapter;
+//                adapter.getFilter().filter(searchText);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
 
+
+    }
+    private String formatDate(String strDate) throws ParseException {
+
+        DateFormat inputFormatter = new SimpleDateFormat("yyyy-mm-dd");
+        Date da = (Date) inputFormatter.parse(strDate);
+
+
+        DateFormat outputFormatter = new SimpleDateFormat("mm/dd");
+        String strDateTime = outputFormatter.format(da);
+
+        return strDateTime;
+    }
     @Override
     public void onSearch(String inputString) {
         filterTransactions(inputString);
+    }
+
+    @Override
+    public void onFilterByDate(String sDate) {
+        filterOrdersByDate(sDate);
     }
 }

@@ -11,6 +11,8 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
+import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -18,6 +20,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -32,6 +35,7 @@ import com.example.pharmacare.model.IOrderDetailsSearch;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class OrdersListActivity extends AppCompatActivity implements View.OnClickListener {
@@ -43,7 +47,8 @@ public class OrdersListActivity extends AppCompatActivity implements View.OnClic
     private TabLayout tabLayout;
     private EditText et_remark;
     private IOrderDetailsSearch orderDetailsSearchListener;
-
+    private int mYear, mMonth, mDay, mHour, mMinute;
+    private String filterDate="";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,7 +124,6 @@ public class OrdersListActivity extends AppCompatActivity implements View.OnClic
     }
 
 
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -129,6 +133,7 @@ public class OrdersListActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
+    @SuppressLint("MissingInflatedId")
     private void showCustomDialog() {
 //        ViewGroup viewGroup = findViewById(android.R.id.content);
         View dialogView = LayoutInflater.from(OrdersListActivity.this).inflate(R.layout.layout_filter_dialog, null, false);
@@ -155,13 +160,44 @@ public class OrdersListActivity extends AppCompatActivity implements View.OnClic
                 alertDialog.dismiss();
             }
         });
+        TextView tv_filter_date=dialogView.findViewById(R.id.tv_filter_date);
+        dialogView.findViewById(R.id.rl_date_pic).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Calendar c = Calendar.getInstance();
+                mYear = c.get(Calendar.YEAR);
+                mMonth = c.get(Calendar.MONTH);
+                mDay = c.get(Calendar.DAY_OF_MONTH);
 
+                DatePickerDialog datePickerDialog = new DatePickerDialog(OrdersListActivity.this,
+                        new DatePickerDialog.OnDateSetListener() {
+
+                            @Override
+                            public void onDateSet(DatePicker view, int year,
+                                                  int monthOfYear, int dayOfMonth) {
+
+                                filterDate=(year + "-" + (monthOfYear + 1) + "-" + dayOfMonth);
+                                tv_filter_date.setText(filterDate);
+
+                            }
+                        }, mYear, mMonth, mDay);
+
+                datePickerDialog.show();
+            }
+        });
 //        btn_confirm_dialog.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
 //                goToHome();
 //            }
 //        });
+        dialogView.findViewById(R.id.btn_apply).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                orderDetailsSearchListener.onFilterByDate(filterDate);
+            }
+        });
         alertDialog.show();
     }
+
 }

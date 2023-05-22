@@ -35,8 +35,8 @@ public class CompletedOrderAdapter extends RecyclerView.Adapter<CompletedOrderAd
     public CompletedOrderAdapter(Context context, ArrayList<Order> completedOrderList) {
         this.context = context;
 //        this.completedOrderList = completedOrderList;
-        originalItems=completedOrderList;
-        filterItems=completedOrderList;
+        originalItems = completedOrderList;
+        filterItems = completedOrderList;
     }
 
 
@@ -111,24 +111,36 @@ public class CompletedOrderAdapter extends RecyclerView.Adapter<CompletedOrderAd
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             FilterResults results = new FilterResults();
-            String query = constraint.toString().toLowerCase();
-            final List<Order> orders = originalItems;
+//            String query = constraint.toString().toLowerCase();
+            String query = constraint.toString();
+            final List<Order> orders = filterItems;
             final List<Order> result_list = new ArrayList<>(orders.size());
 
             for (int i = 0; i < orders.size(); i++) {
-                Log.e("i",String.valueOf(i));
+                Log.e("i", String.valueOf(i));
                 String str_title = orders.get(i).getRemark();
-                //String str_cat = list.get(i).getCategory();
-                Log.e("str_title",str_title);
-                if (str_title.toLowerCase().contains(query)) {
-                    result_list.add(orders.get(i));
-                    Log.e("added>>",orders.get(i).getRemark());
+                String str_date="";
+                try {
+                    str_date = formatDate(orders.get(i).getCreated());
+//                    str_date = orders.get(i).getCreated();
+                } catch (ParseException e) {
+                    e.printStackTrace();
                 }
+                //String str_cat = list.get(i).getCategory( );
+                Log.e("str_title", str_title);
+                Log.e("str_date", str_date);
+                Log.e("query", query);
+//               ||
+                if ( str_date.contains(query) ||  str_title.toLowerCase().contains(query) ){
+                    result_list.add(orders.get(i));
+                    Log.e("added>>", orders.get(i).getRemark());
+                }
+
             }
 
             results.values = result_list;
             results.count = result_list.size();
-          //  notifyDataSetChanged();
+            //  notifyDataSetChanged();
             return results;
         }
 
@@ -136,16 +148,15 @@ public class CompletedOrderAdapter extends RecyclerView.Adapter<CompletedOrderAd
         @SuppressWarnings("unchecked")
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            Log.e("result>>",results.toString());
+            Log.e("result>>", results.toString());
             filterItems = (ArrayList<Order>) results.values;
-
+//            Log.e("items>>", filterItems.get(1).getRemark());
 
             notifyDataSetChanged();
         }
 
 
     }
-
 
 
 }

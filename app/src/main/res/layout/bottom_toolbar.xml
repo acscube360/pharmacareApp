@@ -45,6 +45,7 @@
             android:layout_weight="0.333">
 
             <ImageView
+                android:id="@+id/iv_search_bottom"
                 android:layout_marginRight="35dp"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"

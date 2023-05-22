@@ -56,4 +56,7 @@ public interface Api {
     @GET
     Call<List<OrderItem>> getItemListOfOrder(@Url String s);
 
+    @GET("items")
+    Call<List<Item>> getAllItems();
+
 }

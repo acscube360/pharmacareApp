@@ -136,11 +136,21 @@ public class ActiveOrderAdapter extends RecyclerView.Adapter<ActiveOrderAdapter.
             for (int i = 0; i < orders.size(); i++) {
                 Log.e("i", String.valueOf(i));
 
-                //String str_cat = list.get(i).getCategory();
-//                Log.e("str_title",str_title);
                 if (orders.get(i).getRemark() != null) {
                     String str_title = orders.get(i).getRemark();
-                    if (str_title.toLowerCase().contains(query)) {
+                    String str_date="";
+                    try {
+                        str_date = formatDate(orders.get(i).getCreated());
+//                    str_date = orders.get(i).getCreated();
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    //String str_cat = list.get(i).getCategory( );
+                    Log.e("str_title", str_title);
+                    Log.e("str_date", str_date);
+                    Log.e("query", query);
+//               ||
+                    if ( str_date.contains(query) ||  str_title.toLowerCase().contains(query) ){
                         result_list.add(orders.get(i));
                         Log.e("added>>", orders.get(i).getRemark());
                     }

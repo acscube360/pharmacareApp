@@ -7,5 +7,6 @@
     <string name="camera_denied">App requires camera access to capture prescriptions .Please Allow Pharamacare to access your camera from device settings!</string>
     <string name="alert_denied_title">Access Denied!</string>
     <string name="batch_spinner_title">Select the batch</string>
+    <string name="select_date">Select date</string>
 
 </resources>

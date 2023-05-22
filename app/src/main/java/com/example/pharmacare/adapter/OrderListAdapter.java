@@ -63,6 +63,11 @@ public class OrderListAdapter extends FragmentPagerAdapter {
             public void onSearch(String inputString) {
                 completeOrderFragment.filterTransactions(inputString);
             }
+
+            @Override
+            public void onFilterByDate(String sDate) {
+                completeOrderFragment.filterOrdersByDate(sDate);
+            }
         };
 
         activeOrderFragment = new ActiveOrderFragment();
@@ -70,6 +75,11 @@ public class OrderListAdapter extends FragmentPagerAdapter {
             @Override
             public void onSearch(String inputString) {
                 activeOrderFragment.filterTransactions(inputString);
+            }
+
+            @Override
+            public void onFilterByDate(String sDate) {
+                activeOrderFragment.onFilterByDate(sDate);
             }
         };
 
