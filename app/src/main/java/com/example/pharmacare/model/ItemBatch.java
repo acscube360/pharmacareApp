@@ -6,9 +6,10 @@ public class ItemBatch {
     private Item item;
     private int stock;
 
-    public ItemBatch(int id, String batchName) {
+    public ItemBatch(int id, String batchName,int stock) {
         this.id = id;
         this.batchName = batchName;
+        this.stock = stock;
     }
 
     public String getBatchName() {

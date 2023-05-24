@@ -54,6 +54,7 @@ public class PopupClass {
     JSONArray jsonArray = new JSONArray();
     private int stock = 0;
     private int sellTypeCapacity = 1;
+    private ImageView iv_close;
 
     public void showPopupWindow(final View view, Item item, ArrayList<String> batches, ArrayList<SellingType> sellingTypes, ArrayList<ItemBatch> itemBatches, ArrayList<ItemSellingType> itemSelTypes) {
 
@@ -97,6 +98,8 @@ public class PopupClass {
         batch_spinner = popupView.findViewById(R.id.batch_spinner);
         sell_type_spinner = popupView.findViewById(R.id.sell_type_spinner);
         et_item_count = popupView.findViewById(R.id.et_item_count);
+        btn_cancel = popupView.findViewById(R.id.btn_cancel);
+        iv_close = popupView.findViewById(R.id.iv_close);
 
         ArrayAdapter aa = new ArrayAdapter(view.getContext(), android.R.layout.simple_spinner_item, itemBatchnames);
         aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -116,7 +119,7 @@ public class PopupClass {
 //                }
                 itemBatch = itemBatchnames.get(position);
                 stock = itemBatches.get(position).getStock();
-                // batch_spinner.setSelection(position);
+                sell_type_spinner.setSelection(0);
             }
 
             @Override
@@ -216,7 +219,18 @@ public class PopupClass {
                 }
             }
         });
-
+        btn_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popupWindow.dismiss();
+            }
+        });
+        iv_close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popupWindow.dismiss();
+            }
+        });
         popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
     }
 

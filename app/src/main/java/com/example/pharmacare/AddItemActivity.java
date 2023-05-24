@@ -264,6 +264,7 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
                 Log.e("response>>>>>>>>>", response.raw().toString());
                 if (response.isSuccessful()) {
                     itemBatchnames.add("Select the batch");
+                    itemBatches.add(new ItemBatch(0,"",0));
                     for (int i = 0; i < response.body().size(); i++) {
                         itemBatchnames.add(response.body().get(i).getName());
                         itemBatches.add(response.body().get(i));

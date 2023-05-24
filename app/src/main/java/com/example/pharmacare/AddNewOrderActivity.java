@@ -280,113 +280,118 @@ public class AddNewOrderActivity extends AppCompatActivity implements View.OnCli
     }
 
     private void uploadImage() {
-
-        if (uriArrayList.size() != 0) {
-
-            // Code for showing progressDialog while uploading
-            ProgressDialog progressDialog
-                    = new ProgressDialog(this);
-            progressDialog.getWindow().setGravity(Gravity.CENTER);
-            progressDialog.setTitle("Uploading...");
-            progressDialog.setCancelable(false);
-            progressDialog.show();
-
-            // Defining the child of storageReference
-            StorageReference ref
-                    = storageReference
-                    .child(
-                            "images/"
-                                    + UUID.randomUUID().toString());
-
-            // adding listeners on upload
-            // or failure of image
-            for (Uri uri : uriArrayList) {
-                ref.putFile(uri)
-//                        .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-//                            @Override
-//                            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+        Intent intent = new Intent(getApplicationContext(), AddItemActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        intent.putExtra("item_code", "");
+//        intent.putExtra("url", uri.toString());
+        startActivity(intent);
 //
+//        if (uriArrayList.size() != 0) {
+//
+//            // Code for showing progressDialog while uploading
+//            ProgressDialog progressDialog
+//                    = new ProgressDialog(this);
+//            progressDialog.getWindow().setGravity(Gravity.CENTER);
+//            progressDialog.setTitle("Uploading...");
+//            progressDialog.setCancelable(false);
+//            progressDialog.show();
+//
+//            // Defining the child of storageReference
+//            StorageReference ref
+//                    = storageReference
+//                    .child(
+//                            "images/"
+//                                    + UUID.randomUUID().toString());
+//
+//            // adding listeners on upload
+//            // or failure of image
+//            for (Uri uri : uriArrayList) {
+//                ref.putFile(uri)
+////                        .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+////                            @Override
+////                            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+////
+////                            }
+////                        })
+//                        .addOnSuccessListener(
+//                                new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//
+//                                    @Override
+//                                    public void onSuccess(
+//                                            UploadTask.TaskSnapshot taskSnapshot) {
+//
+//                                        // Image uploaded successfully
+//                                        // Dismiss dialog
+//
+//                                        progressDialog.dismiss();
+//                                        Toast
+//                                                .makeText(AddNewOrderActivity.this,
+//                                                        "Image Uploaded!!",
+//                                                        Toast.LENGTH_SHORT)
+//                                                .show();
+//                                        url = taskSnapshot.getStorage().getDownloadUrl().toString();
+//                                        ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+//                                            @Override
+//                                            public void onSuccess(Uri uri) {
+//                                                Log.e("uri", uri.toString());
+//                                                Intent intent = new Intent(getApplicationContext(), AddItemActivity.class);
+//                                                intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+//                                                intent.putExtra("item_code", "");
+//                                                intent.putExtra("url", uri.toString());
+//                                                startActivity(intent);
+//                                            }
+//                                        }).addOnFailureListener(new OnFailureListener() {
+//                                            @Override
+//                                            public void onFailure(@NonNull Exception e) {
+//                                                e.printStackTrace();
+//                                            }
+//                                        });
+//                                    }
+//                                })
+//
+//                        .addOnFailureListener(new OnFailureListener() {
+//                            @Override
+//                            public void onFailure(@NonNull Exception e) {
+//                                e.printStackTrace();
+//                                // Error, Image not uploaded
+//                                progressDialog.dismiss();
+//                                Toast
+//                                        .makeText(AddNewOrderActivity.this,
+//                                                "Failed " + e.getMessage(),
+//                                                Toast.LENGTH_SHORT)
+//                                        .show();
 //                            }
 //                        })
-                        .addOnSuccessListener(
-                                new OnSuccessListener<UploadTask.TaskSnapshot>() {
-
-                                    @Override
-                                    public void onSuccess(
-                                            UploadTask.TaskSnapshot taskSnapshot) {
-
-                                        // Image uploaded successfully
-                                        // Dismiss dialog
-
-                                        progressDialog.dismiss();
-                                        Toast
-                                                .makeText(AddNewOrderActivity.this,
-                                                        "Image Uploaded!!",
-                                                        Toast.LENGTH_SHORT)
-                                                .show();
-                                        url = taskSnapshot.getStorage().getDownloadUrl().toString();
-                                        ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                            @Override
-                                            public void onSuccess(Uri uri) {
-                                                Log.e("uri", uri.toString());
-                                                Intent intent = new Intent(getApplicationContext(), AddItemActivity.class);
-                                                intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                                                intent.putExtra("item_code", "");
-                                                intent.putExtra("url", uri.toString());
-                                                startActivity(intent);
-                                            }
-                                        }).addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                e.printStackTrace();
-                                            }
-                                        });
-                                    }
-                                })
-
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                e.printStackTrace();
-                                // Error, Image not uploaded
-                                progressDialog.dismiss();
-                                Toast
-                                        .makeText(AddNewOrderActivity.this,
-                                                "Failed " + e.getMessage(),
-                                                Toast.LENGTH_SHORT)
-                                        .show();
-                            }
-                        })
-
-                        .addOnProgressListener(
-                                new OnProgressListener<UploadTask.TaskSnapshot>() {
-
-                                    // Progress Listener for loading
-                                    // percentage on the dialog box
-                                    @Override
-                                    public void onProgress(
-                                            UploadTask.TaskSnapshot taskSnapshot) {
-                                        double progress
-                                                = (100.0
-                                                * taskSnapshot.getBytesTransferred()
-                                                / taskSnapshot.getTotalByteCount());
-                                        progressDialog.setMessage(
-                                                "Uploading "
-                                                        + (int) progress + "%");
-                                    }
-                                });
-
-            }
-
-//            Intent intent = new Intent(this, ShowPrescriptionActivity.class);
-//            intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-////            intent.putExtra("item_code", "");
-//            intent.putExtra("url", "");
-//            startActivity(intent);
-
-
-        } else {
-            Toast.makeText(this, "Please Select Image to upload", Toast.LENGTH_SHORT).show();
-        }
+//
+//                        .addOnProgressListener(
+//                                new OnProgressListener<UploadTask.TaskSnapshot>() {
+//
+//                                    // Progress Listener for loading
+//                                    // percentage on the dialog box
+//                                    @Override
+//                                    public void onProgress(
+//                                            UploadTask.TaskSnapshot taskSnapshot) {
+//                                        double progress
+//                                                = (100.0
+//                                                * taskSnapshot.getBytesTransferred()
+//                                                / taskSnapshot.getTotalByteCount());
+//                                        progressDialog.setMessage(
+//                                                "Uploading "
+//                                                        + (int) progress + "%");
+//                                    }
+//                                });
+//
+//            }
+//
+////            Intent intent = new Intent(this, ShowPrescriptionActivity.class);
+////            intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+//////            intent.putExtra("item_code", "");
+////            intent.putExtra("url", "");
+////            startActivity(intent);
+//
+//
+//        } else {
+//            Toast.makeText(this, "Please Select Image to upload", Toast.LENGTH_SHORT).show();
+//        }
     }
 }
