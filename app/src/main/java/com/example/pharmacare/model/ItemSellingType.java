@@ -26,6 +26,11 @@ public class ItemSellingType {
         this.lastModifiedBy = lastModifiedBy;
     }
 
+    public ItemSellingType(int sellingTypeId, int capacity) {
+        this.sellingTypeId = sellingTypeId;
+        this.capacity = capacity;
+    }
+
     public int getSellingTypeId() {
         return sellingTypeId;
     }

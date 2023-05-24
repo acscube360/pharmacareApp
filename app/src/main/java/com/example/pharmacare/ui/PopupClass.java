@@ -2,7 +2,11 @@ package com.example.pharmacare.ui;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -23,6 +27,7 @@ import com.example.pharmacare.AddItemActivity;
 import com.example.pharmacare.R;
 import com.example.pharmacare.model.Item;
 import com.example.pharmacare.model.ItemBatch;
+import com.example.pharmacare.model.ItemSellingType;
 import com.example.pharmacare.model.OrderItem;
 import com.example.pharmacare.model.SellingType;
 import com.google.gson.Gson;
@@ -31,7 +36,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class PopupClass {
@@ -39,6 +43,7 @@ public class PopupClass {
     private ArrayList<ItemBatch> itemBatchArrayList;
     private ArrayList<String> itemBatchnames = new ArrayList<>();
     ArrayList<SellingType> mSellingTypes = new ArrayList<>();
+    ArrayList<ItemSellingType> mItemSellingTypes = new ArrayList<>();
     private Spinner batch_spinner, sell_type_spinner;
     AppCompatButton btn_cancel, btn_add;
     ArrayList<OrderItem> orderItemArrayList = new ArrayList<>();
@@ -47,11 +52,14 @@ public class PopupClass {
     private int quantity = 0;
     private EditText et_item_count;
     JSONArray jsonArray = new JSONArray();
+    private int stock = 0;
+    private int sellTypeCapacity = 1;
 
-    public void showPopupWindow(final View view, Item item, ArrayList<String> batches, ArrayList<SellingType> sellingTypes) {
+    public void showPopupWindow(final View view, Item item, ArrayList<String> batches, ArrayList<SellingType> sellingTypes, ArrayList<ItemBatch> itemBatches, ArrayList<ItemSellingType> itemSelTypes) {
 
         itemBatchnames = batches;
         mSellingTypes = sellingTypes;
+        mItemSellingTypes = itemSelTypes;
         //Create a View object yourself through inflater
         LayoutInflater inflater = (LayoutInflater) view.getContext().getSystemService(view.getContext().LAYOUT_INFLATER_SERVICE);
         View popupView = inflater.inflate(R.layout.add_item_popup_window, null);
@@ -100,9 +108,14 @@ public class PopupClass {
         sell_type_spinner.setAdapter(selTypeAdapter);
 
         batch_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @SuppressLint("ResourceAsColor")
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                if (position==0){
+//                    ((TextView) parent.getChildAt(0)).setTextColor(R.color.et_hint);
+//                }
                 itemBatch = itemBatchnames.get(position);
+                stock = itemBatches.get(position).getStock();
                 // batch_spinner.setSelection(position);
             }
 
@@ -113,13 +126,59 @@ public class PopupClass {
         });
 
         sell_type_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @SuppressLint("ResourceAsColor")
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                if (position==0){
+//                    ((TextView) parent.getChildAt(0)).setTextColor(R.color.et_hint);
+//                }
                 itemSellingType = mSellingTypes.get(position);
+                sellTypeCapacity = mItemSellingTypes.get(position).getCapacity();
+//                Log.e("sellType position", String.valueOf(position));
+//                Log.e("itemSellingType", String.valueOf(mSellingTypes.get(position).getName()));
+//                Log.e("sellTypeCapacity", String.valueOf(mItemSellingTypes.get(position).getCapacity()));
+
+                if (position != 0) {
+
+                    et_item_count.setHint("You can sell about " + String.valueOf(stock / sellTypeCapacity) + " " + itemSellingType.getName() + " /s");
+
+                }else{
+                    et_item_count.setHint("Quantity");
+                }
+                et_item_count.setHintTextColor(R.color.black);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+
+        et_item_count.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                int q = 0;
+                try {
+                    q = Integer.parseInt(et_item_count.getText().toString());
+                    if (q * sellTypeCapacity > stock) {
+                        Toast.makeText(view.getContext(), "exceed quantity", Toast.LENGTH_SHORT).show();
+                    } else {
+                        quantity = q;
+                    }
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
 
             }
         });
@@ -157,6 +216,7 @@ public class PopupClass {
                 }
             }
         });
+
         popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
     }
 

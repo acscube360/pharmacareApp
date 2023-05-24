@@ -329,9 +329,9 @@ public class AddNewOrderActivity extends AppCompatActivity implements View.OnCli
                                             @Override
                                             public void onSuccess(Uri uri) {
                                                 Log.e("uri", uri.toString());
-                                                Intent intent = new Intent(getApplicationContext(), ShowPrescriptionActivity.class);
+                                                Intent intent = new Intent(getApplicationContext(), AddItemActivity.class);
                                                 intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-//            intent.putExtra("item_code", "");
+                                                intent.putExtra("item_code", "");
                                                 intent.putExtra("url", uri.toString());
                                                 startActivity(intent);
                                             }

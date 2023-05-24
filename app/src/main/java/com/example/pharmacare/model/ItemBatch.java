@@ -4,6 +4,7 @@ public class ItemBatch {
     private int id;
     private String batchName;
     private Item item;
+    private int stock;
 
     public ItemBatch(int id, String batchName) {
         this.id = id;
@@ -40,5 +41,13 @@ public class ItemBatch {
 
     public void setName(String batchName) {
         this.batchName = batchName;
+    }
+
+    public int getStock() {
+        return stock;
+    }
+
+    public void setStock(int stock) {
+        this.stock = stock;
     }
 }

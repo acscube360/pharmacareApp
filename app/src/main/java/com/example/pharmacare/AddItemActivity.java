@@ -65,7 +65,9 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
     private EditText et_search;
     private Item item;
     private ArrayList<String> itemBatchnames;
+    private ArrayList<ItemBatch> itemBatches;
     private ArrayList<SellingType> sellingTypes, itemSellingTypes;
+    private ArrayList<ItemSellingType>itemSelTypes;
     private ArrayList<OrderItem> orderItemArrayList;
     private boolean isFound = false;
     private static LinearLayout ll_header;
@@ -84,7 +86,8 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
         v = getWindow().getDecorView().getRootView();
         fromActiveList = getIntent().getBooleanExtra("fromActiveList", false);
         order = (Order) getIntent().getSerializableExtra("order");
-
+        itemBatches = new ArrayList<>();
+        itemSelTypes=new ArrayList<>();
         initView();
         if (CheckNetwork.isInternetAvailable(this)) {
             getSellingTypes();
@@ -92,7 +95,6 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
 
                 getItems(order);
             } else {
-
 
 
                 item_code = getIntent().getStringExtra("item_code");
@@ -264,6 +266,7 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
                     itemBatchnames.add("Select the batch");
                     for (int i = 0; i < response.body().size(); i++) {
                         itemBatchnames.add(response.body().get(i).getName());
+                        itemBatches.add(response.body().get(i));
                         Log.e("add>>", response.body().get(i).toString());
                     }
                     itemSellingTypes = new ArrayList<>();
@@ -271,6 +274,7 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
                     PopupClass popupClass = new PopupClass();
                     if (item.getItemSellingTypes() != null) {
                         for (ItemSellingType iSt : item.getItemSellingTypes()) {
+                            itemSelTypes.add(iSt);
                             for (SellingType st : sellingTypes) {
                                 if (iSt.getId() == st.getId()) {
                                     itemSellingTypes.add(st);
@@ -279,7 +283,7 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
 
                         }
                     }
-                    popupClass.showPopupWindow(v, item, itemBatchnames, itemSellingTypes);
+                    popupClass.showPopupWindow(v, item, itemBatchnames, itemSellingTypes,itemBatches,itemSelTypes);
 
                 } else {
                     Toast.makeText(AddItemActivity.this, "Cannot find requested item-batch", Toast.LENGTH_SHORT).show();
@@ -439,7 +443,7 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
 //                        Log.e("sell type", orderItemArrayList.get(i).getSellingType().getName());
 //                        Log.e("quantity", String.valueOf(orderItemArrayList.get(i).getQuantity()));
                     }
-                    if (!orderItemArrayList.isEmpty()){
+                    if (!orderItemArrayList.isEmpty()) {
                         ll_header.setVisibility(View.VISIBLE);
                         btn_confirm.setVisibility(View.VISIBLE);
                     }
