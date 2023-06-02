@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ShowPrescriptionActivity"
-    android:background="@color/white">
+    android:background="@color/white"
+    tools:context=".ShowPrescriptionActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -15,17 +15,27 @@
             android:id="@+id/tbar"
             layout="@layout/top_tool_bar" />
 
-        <ImageView
-            android:id="@+id/iv_presc"
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/vp_prescriptions"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/tbar"
-            android:layout_marginBottom="95dp"
-            android:layout_marginTop="15dp"
             android:layout_marginLeft="25dp"
+            android:layout_marginTop="15dp"
             android:layout_marginRight="25dp"
-            android:src="@drawable/prescription1"
-            android:scaleType="centerCrop"/>
+            android:layout_marginBottom="95dp" />
+
+<!--        <ImageView-->
+<!--            android:id="@+id/iv_presc"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_below="@id/tbar"-->
+<!--            android:layout_marginLeft="25dp"-->
+<!--            android:layout_marginTop="15dp"-->
+<!--            android:layout_marginRight="25dp"-->
+<!--            android:layout_marginBottom="95dp"-->
+<!--            android:scaleType="centerCrop"-->
+<!--            android:src="@drawable/prescription1" />-->
 
         <include layout="@layout/bottom_toolbar" />
     </RelativeLayout>
