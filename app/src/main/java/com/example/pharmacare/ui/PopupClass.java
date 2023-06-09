@@ -231,6 +231,8 @@ public class PopupClass {
                 popupWindow.dismiss();
             }
         });
+
+
         popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
     }
 

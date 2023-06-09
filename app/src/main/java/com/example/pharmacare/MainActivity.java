@@ -46,7 +46,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         iv_search_bottom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                IntentUtils.goToSearchActivity(v.getContext());
+                IntentUtils.popupSearch(v);
+//                IntentUtils.goToSearchActivity(v.getContext());
             }
         });
         // add comment

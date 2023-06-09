@@ -40,6 +40,7 @@ import com.example.pharmacare.model.SellingType;
 import com.example.pharmacare.ui.PopupClass;
 import com.example.pharmacare.utility.Api;
 import com.example.pharmacare.utility.CheckNetwork;
+import com.example.pharmacare.utility.IntentUtils;
 import com.example.pharmacare.utility.RetrofitClient;
 
 import org.json.JSONArray;
@@ -205,6 +206,8 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
                 intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intent);
                 break;
+            case R.id.iv_search_bottom:
+                IntentUtils.popupSearch(v);
 
         }
     }

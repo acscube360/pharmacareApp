@@ -32,6 +32,7 @@ import android.widget.Toast;
 
 import com.example.pharmacare.adapter.ShowAddedPrescriptionsAdapter;
 import com.example.pharmacare.utility.CheckNetwork;
+import com.example.pharmacare.utility.IntentUtils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -69,6 +70,7 @@ public class AddNewOrderActivity extends AppCompatActivity implements View.OnCli
         findViewById(R.id.iv_open_gallery).setOnClickListener(this);
         findViewById(R.id.btn_back).setOnClickListener(this);
         findViewById(R.id.btn_next).setOnClickListener(this);
+        findViewById(R.id.iv_search_bottom).setOnClickListener(this);
 //
         SharedPreferences preferences = getSharedPreferences("Order_items", MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
@@ -94,6 +96,10 @@ public class AddNewOrderActivity extends AppCompatActivity implements View.OnCli
                 break;
             case R.id.iv_open_gallery:
                 checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE, STORAGE_PERMISSION_CODE);
+
+                break;
+            case R.id.iv_search_bottom:
+                IntentUtils.popupSearch(v);
 
                 break;
             case R.id.btn_next:
