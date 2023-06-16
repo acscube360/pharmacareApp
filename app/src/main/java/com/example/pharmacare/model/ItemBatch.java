@@ -1,10 +1,17 @@
 package com.example.pharmacare.model;
 
-public class ItemBatch {
+import java.io.Serializable;
+
+public class ItemBatch implements Serializable {
     private int id;
     private String batchName;
     private Item item;
     private int stock;
+    private int receivedStock;
+    private int unitCost;
+    private int unitPrice;
+
+    private String expiryDate   ;
 
     public ItemBatch(int id, String batchName,int stock) {
         this.id = id;
@@ -50,5 +57,38 @@ public class ItemBatch {
 
     public void setStock(int stock) {
         this.stock = stock;
+    }
+
+    public int getReceivedStock() {
+        return receivedStock;
+    }
+
+    public void setReceivedStock(int receivedStock) {
+        this.receivedStock = receivedStock;
+    }
+
+    public int getUnitCost() {
+        return unitCost;
+    }
+
+    public void setUnitCost(int unitCost) {
+        this.unitCost = unitCost;
+    }
+
+    public int getUnitPrice() {
+        return unitPrice;
+    }
+
+    public void setUnitPrice(int unitPrice) {
+        this.unitPrice = unitPrice;
+    }
+
+
+    public String getExpiryDate() {
+        return expiryDate;
+    }
+
+    public void setExpiryDate(String expiryDate) {
+        this.expiryDate = expiryDate;
     }
 }

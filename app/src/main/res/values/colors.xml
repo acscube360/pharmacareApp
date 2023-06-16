@@ -18,5 +18,9 @@
     <color name="sweaper_del">#E50707</color>
     <color name="confirm_bg">#E40707</color>
     <color name="order_list_item_bg">#33B4F2AF</color>
+    <color name="search_result_card_header">#757C80</color>
+    <color name="search_result_card_detail">#3E2C2C</color>
+    <color name="search_result_card_btn">#1984EF</color>
+    <color name="search_result_view_more_bg">#B4F2AF</color>
 
 </resources>

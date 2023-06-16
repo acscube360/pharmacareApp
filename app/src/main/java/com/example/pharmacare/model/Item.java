@@ -1,8 +1,9 @@
 package com.example.pharmacare.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Item {
+public class Item implements Serializable {
     private int id;
     private String name;
     private String measurement;

@@ -1,24 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:animateLayoutChanges="true"
-    android:gravity="center"
+    android:orientation="vertical"
+    android:background="@drawable/confirm_dialog"
+   >
 
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp">
 
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardBackgroundColor="@color/white"
-        app:cardCornerRadius="15dp"
-        app:strokeColor="@color/tv_stroke"
-        android:background="@drawable/confirm_dialog"
-        app:strokeWidth="1dp">
 
         <LinearLayout
-            android:background="@drawable/confirm_dialog"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="25dp"
@@ -34,7 +25,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:text="Paracetamol"
+                    android:text="Search"
                     android:textColor="@color/btn_back_bg"
                     android:textSize="20sp" />
 
@@ -48,29 +39,75 @@
                     android:src="@drawable/cross" />
             </RelativeLayout>
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginBottom="15dp"
+                android:background="@drawable/tv_background">
+
+
+                <EditText
+                    android:id="@+id/et_barcode"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginRight="2dp"
+                    android:background="@color/white"
+                    android:hint="Enter Barcode"
+                    android:inputType="text"
+                    android:padding="6dp"
+                    android:textSize="13sp" />
+
+                <ImageView
+                    android:id="@+id/iv_open_barcode"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    android:contentDescription="TODO"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/camera" />
+            </RelativeLayout>
+
+            <EditText
+
+                android:id="@+id/et_item_id"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginBottom="15dp"
+
+                android:background="@drawable/tv_background"
+                android:hint="Enter item Id"
+                android:padding="10dp"
+                android:textSize="13sp" />
+
+            <EditText
+
+                android:id="@+id/et_item_name"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginBottom="15dp"
+                android:background="@drawable/tv_background"
+                android:hint="Enter Name"
+                android:padding="10dp"
+                android:textSize="13sp" />
+
             <Spinner
-                android:id="@+id/batch_spinner"
+                android:id="@+id/category_spinner"
                 android:layout_width="fill_parent"
                 android:layout_height="40dp"
-                android:background="@drawable/tv_background"
                 android:layout_marginBottom="15dp"
-                />
+                android:background="@drawable/tv_background" />
+
             <Spinner
-                android:id="@+id/sell_type_spinner"
+                android:id="@+id/sub_category_spinner"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:layout_marginBottom="15dp"
                 android:background="@drawable/tv_background" />
 
-           <EditText
-
-               android:padding="10dp"
-               android:layout_marginBottom="15dp"
-               android:layout_width="match_parent"
-               android:layout_height="40dp"
-               android:background="@drawable/tv_background"
-               android:id="@+id/et_item_count"
-               android:inputType="number"/>
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
@@ -78,6 +115,7 @@
                 android:layout_alignParentBottom="true"
                 android:layout_marginLeft="25dp"
                 android:layout_marginRight="25dp"
+                android:layout_marginBottom="45dp"
                 android:orientation="horizontal">
 
                 <androidx.appcompat.widget.AppCompatButton
@@ -97,12 +135,12 @@
                     android:layout_weight="0.1" />
 
                 <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btn_add"
+                    android:id="@+id/btn_search"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="0.45"
                     android:background="@drawable/btn_next_background"
-                    android:text="Add"
+                    android:text="Search"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
                     android:textSize="16sp" />
@@ -111,5 +149,5 @@
 
         </LinearLayout>
 
-    </com.google.android.material.card.MaterialCardView>
+
 </LinearLayout>

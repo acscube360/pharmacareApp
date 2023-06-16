@@ -19,6 +19,9 @@ public class IntentUtils {
 
     public static void popupSearch(View view){
         new PopupSearchView().showPopupSearchView(view);
+//        Intent intent=new Intent(view.getContext(), SearchItemActivity.class);
+//        intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+//        view.getContext().startActivity(intent);
     }
     public static void goToHome(Context context){
         Intent intent=new Intent(context, MainActivity.class);
