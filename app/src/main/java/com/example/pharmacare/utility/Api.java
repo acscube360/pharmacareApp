@@ -2,6 +2,8 @@ package com.example.pharmacare.utility;
 
 import com.example.pharmacare.model.Item;
 import com.example.pharmacare.model.ItemBatch;
+import com.example.pharmacare.model.ItemCategory;
+import com.example.pharmacare.model.ItemSubCategory;
 import com.example.pharmacare.model.Order;
 import com.example.pharmacare.model.OrderBatchItem;
 import com.example.pharmacare.model.OrderItem;
@@ -58,5 +60,15 @@ public interface Api {
 
     @GET("items")
     Call<List<Item>> getAllItems();
+
+
+    @GET("itemCategory")
+    Call<List<ItemCategory>> getAllCategories();
+
+
+    @GET("itemSubCategory")
+    Call<List<ItemSubCategory>> getAllSubCategories();
+
+
 
 }
