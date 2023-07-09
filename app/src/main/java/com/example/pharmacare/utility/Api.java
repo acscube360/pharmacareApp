@@ -8,6 +8,7 @@ import com.example.pharmacare.model.Order;
 import com.example.pharmacare.model.OrderBatchItem;
 import com.example.pharmacare.model.OrderItem;
 import com.example.pharmacare.model.SellingType;
+import com.example.pharmacare.model.Supplier;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -68,6 +69,9 @@ public interface Api {
 
     @GET("itemSubCategory")
     Call<List<ItemSubCategory>> getAllSubCategories();
+
+    @GET("supplier")
+    Call<List<Supplier>> getAllSuppliers();
 
 
 

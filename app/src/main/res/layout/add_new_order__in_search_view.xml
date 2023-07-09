@@ -25,7 +25,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:text="Add New Order to “Name”"
+                android:text=""
                 android:textColor="@color/btn_back_bg"
                 android:textSize="20sp" />
 

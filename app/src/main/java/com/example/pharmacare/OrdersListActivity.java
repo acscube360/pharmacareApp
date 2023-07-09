@@ -48,7 +48,8 @@ public class OrdersListActivity extends AppCompatActivity implements View.OnClic
     private EditText et_remark;
     private IOrderDetailsSearch orderDetailsSearchListener;
     private int mYear, mMonth, mDay, mHour, mMinute;
-    private String filterDate="";
+    private String filterDate = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -160,7 +161,7 @@ public class OrdersListActivity extends AppCompatActivity implements View.OnClic
                 alertDialog.dismiss();
             }
         });
-        TextView tv_filter_date=dialogView.findViewById(R.id.tv_filter_date);
+        TextView tv_filter_date = dialogView.findViewById(R.id.tv_filter_date);
         dialogView.findViewById(R.id.rl_date_pic).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -176,7 +177,7 @@ public class OrdersListActivity extends AppCompatActivity implements View.OnClic
                             public void onDateSet(DatePicker view, int year,
                                                   int monthOfYear, int dayOfMonth) {
 
-                                filterDate=(year + "-" + (monthOfYear + 1) + "-" + dayOfMonth);
+                                filterDate = (year + "-" + (monthOfYear + 1) + "-" + dayOfMonth);
                                 tv_filter_date.setText(filterDate);
 
                             }
@@ -195,6 +196,7 @@ public class OrdersListActivity extends AppCompatActivity implements View.OnClic
             @Override
             public void onClick(View v) {
                 orderDetailsSearchListener.onFilterByDate(filterDate);
+                alertDialog.dismiss();
             }
         });
         alertDialog.show();

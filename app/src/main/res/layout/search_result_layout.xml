@@ -85,7 +85,7 @@
                                 android:layout_width="0dp"
                                 android:layout_weight="0.333"
                                 android:layout_height="wrap_content"
-                                android:text="Amoxil 500mg"
+                                android:text="1"
                                 android:textColor="@color/search_result_card_detail"/>
 
 
@@ -197,7 +197,8 @@
                                 android:text="View more"
                                 android:textSize="12sp"
                                 android:textAllCaps="false"
-                                android:layout_height="35dp"/>
+                                android:layout_height="35dp"
+                                android:id="@+id/btn_view_more"/>
                             <Button
                                 android:layout_marginLeft="20dp"
                                 android:layout_marginRight="10dp"

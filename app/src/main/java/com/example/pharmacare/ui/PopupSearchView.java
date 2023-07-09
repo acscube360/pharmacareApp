@@ -2,6 +2,7 @@ package com.example.pharmacare.ui;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.util.Log;
@@ -51,6 +52,11 @@ public class PopupSearchView {
     ArrayList<String> subCatNames = new ArrayList<>();
 
     public void showPopupSearchView(View view) {
+        SharedPreferences sp = view.getContext().getSharedPreferences("ItemBarcode", 0);
+
+
+
+
         getAllCategories(view);
         getAllSubCategories(view);
         itemCategories = new ArrayList<>();
@@ -83,15 +89,18 @@ public class PopupSearchView {
         iv_close = dialogView.findViewById(R.id.iv_close);
         btn_search = dialogView.findViewById(R.id.btn_search);
         et_barcode = dialogView.findViewById(R.id.et_barcode);
+        et_barcode.setText(sp.getString("barcode", ""));
         et_item_id = dialogView.findViewById(R.id.et_item_id);
         et_item_name = dialogView.findViewById(R.id.et_item_name);
+        et_item_name .setText( sp.getString("itemName", ""));
         iv_open_barcode = dialogView.findViewById(R.id.iv_open_barcode);
 
         iv_open_barcode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                v.getContext().startActivity(new Intent(v.getContext(), ScanBarcodeActivity.class));
+                Intent intent = new Intent(v.getContext(), ScanBarcodeActivity.class);
+                intent.putExtra("fromSearch", true);
+                v.getContext().startActivity(intent);
 
             }
         });
@@ -118,6 +127,11 @@ public class PopupSearchView {
                     Toast.makeText(dialogView.getContext(), "Required Barcode /Item name / Item Id", Toast.LENGTH_SHORT).show();
                 } else {
                     if (CheckNetwork.isInternetAvailable(v.getContext())) {
+                        SharedPreferences sp =v.getContext(). getSharedPreferences("ItemBarcode", 0);
+                        SharedPreferences.Editor editor = sp.edit();
+                        editor.putString("barcode","");
+                        editor.putString("itemName","");
+                        editor.commit();
                         final ProgressDialog progressDialog = new ProgressDialog(v.getContext());
 
                         new Thread(new Runnable() {
@@ -176,22 +190,25 @@ public class PopupSearchView {
         catNames.add("Select Category");
         subCatNames.add("Select Sub Category");
         ArrayAdapter catAdapter = new ArrayAdapter(view.getContext(), R.layout.spinner_item, catNames);
-//        catAdapter.setDropDownViewResource(R.layout.spinner_item);
         category_spinner.setAdapter(catAdapter);
 
         ArrayAdapter subCatAdapter = new ArrayAdapter(view.getContext(), R.layout.spinner_item, subCatNames);
-//        subCatAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sub_category_spinner.setAdapter(subCatAdapter);
+        sub_category_spinner.setEnabled(false);
 
         category_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                sub_category_spinner.setSelection(0);
                 if (position != 0) {
-                    subCatNames=new ArrayList<>();
-                    subCatNames=setItemSubCategoryNames(itemSubCategories, itemCategories.get(position - 1).getId());
+                    sub_category_spinner.setEnabled(true);
+                    subCatNames = new ArrayList<>();
+                    subCatNames = setItemSubCategoryNames(itemSubCategories, itemCategories.get(position - 1).getId());
                     subCatAdapter.clear();
                     subCatAdapter.addAll(subCatNames);
                     Log.e("selected", itemCategories.get(position - 1).getName());
+                } else {
+                    sub_category_spinner.setEnabled(false);
                 }
             }
 
@@ -201,18 +218,18 @@ public class PopupSearchView {
             }
         });
 
-//        sub_category_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                Log.d("selected", String.valueOf(position));
-//
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> parent) {
-//
-//            }
-//        });
+        sub_category_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("selected", String.valueOf(position));
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
         alertDialog.show();
 
     }

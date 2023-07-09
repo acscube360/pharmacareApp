@@ -7,6 +7,7 @@ import androidx.core.app.ActivityCompat;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -63,12 +64,13 @@ public class ScanBarcodeActivity extends AppCompatActivity implements View.OnCli
     private View rootView;
     private boolean isFoundItem = false;
     private Item resultItem;
+    private boolean fromSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan_barcode);
-
+        fromSearch = getIntent().getBooleanExtra("fromSearch", false);
         btn_scan = findViewById(R.id.btn_scan);
         btn_scan.setOnClickListener(this);
         surfaceView = findViewById(R.id.surface_view);
@@ -178,6 +180,9 @@ public class ScanBarcodeActivity extends AppCompatActivity implements View.OnCli
     }
 
     private void getItemByNameOrId(String name) {
+        SharedPreferences sp = getSharedPreferences("ItemBarcode", 0);
+        SharedPreferences.Editor editor = sp.edit();
+
         final ProgressDialog progressDialog = new ProgressDialog(ScanBarcodeActivity.this);
         progressDialog.setCancelable(false); // set cancelable to false
         progressDialog.setMessage("Please Wait"); // set message
@@ -187,7 +192,9 @@ public class ScanBarcodeActivity extends AppCompatActivity implements View.OnCli
             public void onResponse(Call<List<Item>> call, Response<List<Item>> response) {
                 progressDialog.dismiss();
                 if (response.isSuccessful()) {
-
+                    editor.putString("barcode",response.body().get(0).getBarcode());
+                    editor.putString("itemName",response.body().get(0).getName());
+                    editor.commit();
                     btn_scan.setText(response.body().get(0).getName());
                     isFoundItem = true;
 
@@ -209,7 +216,7 @@ public class ScanBarcodeActivity extends AppCompatActivity implements View.OnCli
         });
     }
 
-    private void setResponsToItemObject( Response<List<Item>> response){
+    private void setResponsToItemObject(Response<List<Item>> response) {
 
         resultItem.setId(response.body().get(0).getId());
         resultItem.setName(response.body().get(0).getName());

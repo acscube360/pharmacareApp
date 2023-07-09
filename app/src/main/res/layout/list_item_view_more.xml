@@ -3,15 +3,16 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:cardPreventCornerOverlap="true"
+        app:cardUseCompatPadding="true"
         app:cardCornerRadius="10dp"
-        app:cardElevation="2dp"
         android:layout_margin="10dp"
         android:background="@color/search_result_view_more_bg"
         tools:ignore="MissingConstraints">
@@ -34,21 +35,28 @@
                         android:layout_width="0dp"
                         android:layout_weight="0.333"
                         android:layout_height="wrap_content"
-                        android:text="ID"
+                        android:text="Batch Number"
                         android:textSize="12sp"
                         android:textColor="@color/search_result_card_header"
                         android:layout_marginLeft="10dp"/>
 
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_weight="0.333"
-                        android:layout_height="match_parent"
-                        android:background="@color/white" />
                     <TextView
                         android:layout_width="0dp"
                         android:layout_weight="0.333"
                         android:layout_height="wrap_content"
-                        android:text="Name"
+                        android:text="Available Quantity"
+                        android:textSize="12sp"
+
+                        android:textColor="@color/search_result_card_header"
+                       />
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="0.333"
+                        android:layout_height="wrap_content"
+                        android:text="Expire Date"
+                        android:layout_marginLeft="10dp"
+
+                        android:textSize="12sp"
                         android:textColor="@color/search_result_card_header"/>
 
                 </LinearLayout>
@@ -59,7 +67,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
                     <TextView
-                        android:id="@+id/tv_item_id"
+                        android:id="@+id/tv_batch_no"
                         android:layout_width="0dp"
                         android:layout_weight="0.333"
                         android:layout_height="wrap_content"
@@ -68,16 +76,23 @@
                         android:textColor="@color/search_result_card_detail"
                         android:layout_marginLeft="10dp"/>
 
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_weight="0.333"
-                        android:layout_height="match_parent"
-                        android:background="@color/white" />
                     <TextView
-                        android:id="@+id/tv_item_name"
+                        android:id="@+id/tv_avail_q"
                         android:layout_width="0dp"
                         android:layout_weight="0.333"
                         android:layout_height="wrap_content"
+                        android:text="123456789"
+                        android:textSize="12sp"
+                        android:textColor="@color/search_result_card_detail"
+                      />
+                    <TextView
+                        android:id="@+id/tv_exp_date"
+                        android:layout_width="0dp"
+                        android:layout_weight="0.333"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:layout_marginLeft="10dp"
+
                         android:text="Amoxil 500mg"
                         android:textColor="@color/search_result_card_detail"/>
 
@@ -97,7 +112,7 @@
                         android:layout_width="0dp"
                         android:layout_weight="0.333"
                         android:layout_height="wrap_content"
-                        android:text="Barcode"
+                        android:text="Received Quantity"
                         android:textSize="12sp"
                         android:textColor="@color/search_result_card_header"
                         android:layout_marginLeft="10dp"/>
@@ -105,15 +120,19 @@
                         android:layout_width="0dp"
                         android:layout_weight="0.333"
                         android:layout_height="wrap_content"
-                        android:text="Measurement"
+                        android:text="Unit Cost"
                         android:textSize="12sp"
+                        android:layout_marginLeft="10dp"
                         android:textColor="@color/search_result_card_header"
                         />
                     <TextView
                         android:layout_width="0dp"
                         android:layout_weight="0.333"
                         android:layout_height="wrap_content"
-                        android:text="Available Count"
+                        android:textSize="12sp"
+                        android:layout_marginLeft="10dp"
+
+                        android:text="Unit Price"
                         android:textColor="@color/search_result_card_header"/>
 
                 </LinearLayout>
@@ -124,7 +143,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
                     <TextView
-                        android:id="@+id/tv_item_barcode"
+                        android:id="@+id/tv_rec_q"
                         android:layout_width="0dp"
                         android:layout_weight="0.333"
                         android:layout_height="wrap_content"
@@ -133,22 +152,26 @@
                         android:textColor="@color/search_result_card_detail"
                         android:layout_marginLeft="10dp"/>
                     <TextView
-                        android:id="@+id/tv_item_measurement"
+                        android:id="@+id/tv_unit_cost"
                         android:layout_width="0dp"
                         android:layout_weight="0.333"
                         android:layout_height="wrap_content"
                         android:text="Tablet"
                         android:textSize="12sp"
+android:layout_marginLeft="10dp"
                         android:textColor="@color/search_result_card_detail"
                         />
 
 
                     <TextView
-                        android:id="@+id/tv_item_count"
+                        android:layout_marginLeft="10dp"
+
+                        android:id="@+id/tv_unit_price"
                         android:layout_width="0dp"
                         android:layout_weight="0.333"
                         android:layout_height="wrap_content"
                         android:text="12,0000"
+                        android:textSize="12sp"
                         android:textColor="@color/search_result_card_detail"/>
 
                 </LinearLayout>
