@@ -216,7 +216,7 @@ public class ActiveOrderFragment extends Fragment implements IOrderDetailsSearch
             // mAdapter.filterData(search_text);
             try {
                 Log.e("formattedDate",date);
-                ((CompletedOrderAdapter) rv_completed_order.getAdapter()).getFilter().filter(date);
+                ((ActiveOrderAdapter) rv_completed_order.getAdapter()).getFilter().filter(date);
 //                CompletedOrderAdapter adapter = this.adapter;
 //                adapter.getFilter().filter(searchText);
             } catch (Exception ex) {

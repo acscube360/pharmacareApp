@@ -89,9 +89,13 @@ public class ScanBarcodeActivity extends AppCompatActivity implements View.OnCli
 
                     surfaceView.setVisibility(View.VISIBLE);
                 } else {
-                    Intent intent = new Intent(ScanBarcodeActivity.this, AddItemActivity.class);
-                    intent.putExtra("item_code", btn_scan.getText().toString());  // pass your values and retrieve them in the other Activity using AnyKeyName
-                    startActivity(intent);
+                    if (fromSearch) {
+                        onBackPressed();
+                    } else {
+                        Intent intent = new Intent(ScanBarcodeActivity.this, AddItemActivity.class);
+                        intent.putExtra("item_code", btn_scan.getText().toString());  // pass your values and retrieve them in the other Activity using AnyKeyName
+                        startActivity(intent);
+                    }
                 }
 //                startQRScanner();
 
@@ -192,8 +196,8 @@ public class ScanBarcodeActivity extends AppCompatActivity implements View.OnCli
             public void onResponse(Call<List<Item>> call, Response<List<Item>> response) {
                 progressDialog.dismiss();
                 if (response.isSuccessful()) {
-                    editor.putString("barcode",response.body().get(0).getBarcode());
-                    editor.putString("itemName",response.body().get(0).getName());
+                    editor.putString("barcode", response.body().get(0).getBarcode());
+                    editor.putString("itemName", response.body().get(0).getName());
                     editor.commit();
                     btn_scan.setText(response.body().get(0).getName());
                     isFoundItem = true;

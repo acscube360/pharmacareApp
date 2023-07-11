@@ -113,7 +113,7 @@ public class CompletedOrderAdapter extends RecyclerView.Adapter<CompletedOrderAd
             FilterResults results = new FilterResults();
 //            String query = constraint.toString().toLowerCase();
             String query = constraint.toString();
-            final List<Order> orders = filterItems;
+            final List<Order> orders = originalItems;
             final List<Order> result_list = new ArrayList<>(orders.size());
 
             for (int i = 0; i < orders.size(); i++) {
@@ -154,7 +154,6 @@ public class CompletedOrderAdapter extends RecyclerView.Adapter<CompletedOrderAd
 
             notifyDataSetChanged();
         }
-
 
     }
 
